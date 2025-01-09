@@ -1,3 +1,3 @@
 #! /bin/bash
 
-./hello
+./copy ${INPUT} ${OUTPUT}
