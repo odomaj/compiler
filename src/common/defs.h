@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-#define OPERATOR 0
-#define INT 1
+#define NO_TYPE 0
+#define OPERATOR 1
+#define INT 2
 
 #endif
