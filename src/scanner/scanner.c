@@ -11,15 +11,21 @@ uint8_t scan_file(const char *src_file_path, token_list_t *dest)
         return 1;
     }
     int c = 0;
-    uint16_t index = 0;
+    size_t index = 0;
+    size_t buff_size = 64;
     uint8_t prev_type = NO_TYPE;
-    char buff[SCANNER_BUFF_SIZE];
+    char *buff = (char *)calloc(buff_size, sizeof(char));
     while ((buff[index] = fgetc(file)) != EOF)
     {
         token_t *new_token = token_buff(buff, &index, &prev_type);
         index++;
         if (new_token != NULL)
             push_prev(new_token, dest);
+        if (index > buff_size)
+        {
+            buff_size += buff_size;
+            buff = (char *)realloc(buff, buff_size * sizeof(char));
+        }
     }
     switch (prev_type)
     {
@@ -33,11 +39,12 @@ uint8_t scan_file(const char *src_file_path, token_list_t *dest)
         push_prev(new_token(INT, &num), dest);
         break;
     }
+    free(buff);
     fclose(file);
     return 0;
 }
 
-token_t *token_buff(char *buff, uint16_t *index, uint8_t *prev_type)
+token_t *token_buff(char *buff, size_t *index, uint8_t *prev_type)
 {
     char last_char = buff[*index];
     if (last_char >= '0' && last_char <= '9')
