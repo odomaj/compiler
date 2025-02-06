@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define NO_TYPE 0
-#define OPERATOR 1
-#define INT 2
+#define NUM 1
+#define OPERATOR 2
 
 #endif

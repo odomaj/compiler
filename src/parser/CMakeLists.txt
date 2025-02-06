@@ -4,7 +4,7 @@ project( PARSER C )
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../common )
 
-set( PARSER_SRC parser.c )
+set( PARSER_SRC parser.c scanner.c )
 
 add_library( parser STATIC ${PARSER_SRC} )
 

@@ -9,32 +9,18 @@ typedef struct
     void *data;
 } token_t;
 
-typedef struct
+typedef struct tree_s
 {
-    token_t *token;
-    void *next;
-    void *prev;
-} token_list_t;
+    token_t token;
+    struct tree_s *left;
+    struct tree_s *right;
+} tree_t;
 
-token_list_t *new_token_list();
-token_t *new_token(uint8_t type, void *data);
+tree_t *make_num(double value);
+tree_t *make_op(char operator, tree_t * left_value, tree_t *right_value);
 
-token_t *get_token(token_list_t *token_list);
+tree_t *make_tree(token_t token, tree_t *left, tree_t *right);
 
-token_list_t *get_head(token_list_t *token_list);
-token_list_t *get_front(token_list_t *token_list);
-token_list_t *get_back(token_list_t *token_list);
-token_list_t *get_next(token_list_t *token_list);
-token_list_t *get_prev(token_list_t *token_list);
-
-token_list_t *push_prev(token_t *token, token_list_t *token_list);
-token_list_t *push_next(token_t *token, token_list_t *token_list);
-
-uint8_t remove_token(token_list_t *token_list);
-
-token_list_t *push_back(token_t *token, token_list_t *token_list);
-token_list_t *push_front(token_t *token, token_list_t *token_list);
-
-void delete_token(token_t *token);
+void free_tree(tree_t *tree);
 
 #endif

@@ -1,121 +1,50 @@
+#include <stdlib.h>
+#include <assert.h>
+#include <string.h>
 #include "utils.h"
-#include "string.h"
-#include "stdlib.h"
 
-token_list_t *new_token_list()
+tree_t *make_num(double value)
 {
-    token_list_t *token_list = (token_list_t *)malloc(sizeof(token_list_t));
-    token_list->next = token_list;
-    token_list->prev = token_list;
-    token_list->token = NULL;
-    return token_list;
+    tree_t *tree = malloc(sizeof(tree_t));
+    assert(tree != NULL);
+    tree->token.type = NUM;
+    tree->token.data = malloc(sizeof(double));
+    assert(tree->token.data != NULL);
+    memcpy(tree->token.data, &value, sizeof(double));
+    tree->left = NULL;
+    tree->right = NULL;
+    return tree;
 }
 
-token_t *new_token(uint8_t type, void *data)
+tree_t *make_op(char operator, tree_t * left_value, tree_t *right_value)
 {
-    token_t *token = (token_t *)malloc(sizeof(token_t));
-    token->type = type;
-    switch (type)
-    {
-    case OPERATOR:
-        token->data = (char *)malloc(sizeof(char));
-        memcpy(token->data, data, sizeof(char));
-        return token;
-    case INT:
-        token->data = (int *)malloc(sizeof(int));
-        memcpy(token->data, data, sizeof(int));
-        return token;
-    }
-    return NULL;
+    tree_t *tree = malloc(sizeof(tree_t));
+    assert(tree != NULL);
+    tree->token.type = OPERATOR;
+    tree->token.data = malloc(sizeof(char));
+    assert(tree->token.data != NULL);
+    memcpy(tree->token.data, &operator, sizeof(char));
+    tree->left = left_value;
+    tree->right = right_value;
+    return tree;
 }
 
-inline token_t *get_token(token_list_t *token_list)
+tree_t *make_tree(token_t token, tree_t *left, tree_t *right)
 {
-    if (token_list == NULL)
-        return NULL;
-    return token_list->token;
+    tree_t *tree = malloc(sizeof(tree_t));
+    assert(tree != NULL);
+    tree->token = token;
+    tree->left = left;
+    tree->right = right;
+    return tree;
 }
 
-token_list_t *get_head(token_list_t *token_list)
+void free_tree(tree_t *tree)
 {
-    token_list_t *start_node = token_list;
-    while (token_list->token != NULL)
-    {
-        token_list = (token_list_t *)(token_list->next);
-        if (token_list == start_node)
-            return start_node;
-    }
-    return token_list;
-}
-
-inline token_list_t *get_front(token_list_t *token_list)
-{
-    return (token_list_t *)(get_head(token_list)->next);
-}
-
-inline token_list_t *get_back(token_list_t *token_list)
-{
-    return (token_list_t *)(get_head(token_list)->prev);
-}
-
-inline token_list_t *get_next(token_list_t *token_list)
-{
-    return (token_list_t *)(token_list->next);
-}
-
-inline token_list_t *get_prev(token_list_t *token_list)
-{
-    return (token_list_t *)(token_list->prev);
-}
-
-token_list_t *push_prev(token_t *token, token_list_t *token_list)
-{
-    token_list_t *new_node = (token_list_t *)malloc(sizeof(token_list_t));
-    new_node->token = token;
-    token_list_t *prev_back = token_list->prev;
-    prev_back->next = new_node;
-    new_node->prev = prev_back;
-    new_node->next = token_list;
-    token_list->prev = new_node;
-    return new_node;
-}
-
-token_list_t *push_next(token_t *token, token_list_t *token_list)
-{
-    token_list_t *new_node = (token_list_t *)malloc(sizeof(token_list_t));
-    new_node->token = token;
-    token_list_t *prev_front = token_list->next;
-    prev_front->prev = new_node;
-    new_node->next = prev_front;
-    new_node->prev = token_list;
-    token_list->next = new_node;
-    return new_node;
-}
-
-uint8_t remove_token(token_list_t *token_list)
-{
-    if (token_list->token == NULL)
-        return 1;
-    token_list_t *prev = (token_list_t *)token_list->prev;
-    token_list_t *next = (token_list_t *)token_list->next;
-    prev->next = next;
-    next->prev = prev;
-    delete_token(token_list->token);
-    return 0;
-}
-
-inline token_list_t *push_back(token_t *token, token_list_t *token_list)
-{
-    return push_prev(token, get_head(token_list));
-}
-
-inline token_list_t *push_front(token_t *token, token_list_t *token_list)
-{
-    return push_next(token, get_head(token_list));
-}
-
-inline void delete_token(token_t *token)
-{
-    free(token->data);
-    free(token);
+    if (tree == NULL)
+        return;
+    (void)free(tree->token.data);
+    (void)free_tree(tree->left);
+    (void)free_tree(tree->right);
+    (void)free(tree);
 }

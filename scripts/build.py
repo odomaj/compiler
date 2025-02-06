@@ -52,14 +52,20 @@ def build_exe(tag: str) -> None:
 if __name__ == "__main__":
     arg_parser: ArgumentParser = ArgumentParser()
     arg_parser.add_argument("--tag", "-t", default="dragon-compiler")
-    arg_parser.add_argument("--image", "-i", default="true")
-    arg_parser.add_argument("--exe", "-e", default="true")
+    arg_parser.add_argument("--image", "-i", default="y")
+    arg_parser.add_argument("--exe", "-e", default="y")
     args: Namespace = arg_parser.parse_args()
-    if args.image == "true":
+    if args.image == "y":
         build_image(args.tag)
-    elif args.image != "false":
-        pass
-    if args.exe == "true":
+    elif args.image != "n":
+        print(
+            f"[ERROR] {args.image} not an option for --image flag, enter y"
+            " or n"
+        )
+        exit(1)
+    if args.exe == "y":
         build_exe(args.tag)
-    elif args.exe != "false":
-        pass
+    elif args.exe != "n":
+        print(f"[ERROR] {args.exe} not an option for --exe flag, enter y or n")
+        exit(1)
+    exit(0)

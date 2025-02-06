@@ -10,23 +10,21 @@
  * P1 -> '*' E P1 | '/' E P1 | empty
  * E  -> B E1
  * E1 -> '^' E | empty
- * B  -> '(' S ')' | int
+ * B  -> '(' S ')' | NUM
  */
 
-typedef struct
-{
-    int8_t return_code;
-    float result;
-} parser_data_t;
+tree_t *parse_file(const char *filepath);
 
-parser_data_t parse_tree(token_list_t *tree);
+tree_t *sum();
+tree_t *sum_help();
 
-parser_data_t sum(token_list_t *tree);
-parser_data_t sum_help(token_list_t *tree);
-parser_data_t product(token_list_t *tree);
-parser_data_t product_help(token_list_t *tree);
-parser_data_t power(token_list_t *tree);
-parser_data_t power_help(token_list_t *tree);
-parser_data_t bracket(token_list_t *tree);
+tree_t *product();
+tree_t *product_help();
+
+tree_t *power();
+tree_t *power_help();
+
+tree_t *bracket();
+tree_t *bracket_help();
 
 #endif
