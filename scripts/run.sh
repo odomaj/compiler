@@ -1,3 +1,3 @@
 #! /bin/bash
 
-./copy ${INPUT} ${OUTPUT}
+./calculator ${INPUT} ${OUTPUT}
