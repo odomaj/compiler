@@ -8,6 +8,7 @@ int main(int argc, char **argv)
         printf("[ERROR] requires 2 arguments, %i given", argc - 1);
     }
     tree_t *tree = parse_file(argv[1]);
+    (void)print_tree(tree);
     (void)free_tree(tree);
     return 0;
 }

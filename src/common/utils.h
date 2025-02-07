@@ -22,5 +22,11 @@ tree_t *make_op(char operator, tree_t * left_value, tree_t *right_value);
 tree_t *make_tree(token_t token, tree_t *left, tree_t *right);
 
 void free_tree(tree_t *tree);
+void free_token(token_t token);
+
+double get_num(token_t token);
+char get_op(token_t token);
+
+void print_tree(tree_t *tree);
 
 #endif

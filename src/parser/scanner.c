@@ -25,9 +25,9 @@ uint8_t open_scanner(const char *filepath)
 uint8_t next_token(token_t *dest)
 {
     if (file == NULL || buffer == NULL)
-        return 1;
+        return 0;
     if (buffer_end >= buffer_size && !resize_buffer())
-        return 1;
+        return 0;
     int c = 0;
     while ((c = fgetc(file)) != EOF)
     {
@@ -68,6 +68,8 @@ uint8_t token_type(char c, uint8_t previous_type)
     case '*':
     case '/':
     case '^':
+    case '(':
+    case ')':
         return OPERATOR;
     case '-':
         if (previous_type == NUM)
@@ -81,6 +83,11 @@ uint8_t token_type(char c, uint8_t previous_type)
 
 uint8_t first_token(token_t *dest)
 {
+    if (buffer_end == 0)
+    {
+        dest->type = NO_TYPE;
+        return 0;
+    }
     dest->type = token_type(buffer[0], previous_token_type);
     switch (dest->type)
     {
@@ -91,7 +98,7 @@ uint8_t first_token(token_t *dest)
         (void)load_num(dest);
         break;
     }
-    return buffer_end != 0;
+    return 1;
 }
 
 void load_op(token_t *dest)
@@ -110,12 +117,11 @@ void load_num(token_t *dest)
 {
     // get index of next type (find char length of num)
     size_t next_type_index;
-    for (next_type_index = 1; next_type_index <= buffer_end; next_type_index++)
+    for (next_type_index = 1; next_type_index < buffer_end; next_type_index++)
     {
         if (token_type(buffer[next_type_index], NUM) != NUM)
             break;
     }
-
     // make numerical contents of buffer null terminated
     // save the numerical contents of buffer as double
     char temp = buffer[next_type_index];

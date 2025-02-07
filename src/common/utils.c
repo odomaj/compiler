@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include <string.h>
 #include "utils.h"
@@ -47,4 +48,51 @@ void free_tree(tree_t *tree)
     (void)free_tree(tree->left);
     (void)free_tree(tree->right);
     (void)free(tree);
+}
+
+inline void free_token(token_t token)
+{
+    free(token.data);
+}
+
+double get_num(token_t token)
+{
+    assert(token.type == NUM);
+    return *(double *)token.data;
+}
+
+char get_op(token_t token)
+{
+    assert(token.type == OPERATOR);
+    return *(char *)token.data;
+}
+
+void print_tree_h(tree_t *tree, uint8_t depth)
+{
+    if (tree == NULL)
+        return;
+    for (uint8_t i = 0; i < depth * 4; i++)
+    {
+        printf(" ");
+    }
+    switch (tree->token.type)
+    {
+    case OPERATOR:
+        printf("[OP:  %c]\n", get_op(tree->token));
+        print_tree_h(tree->left, depth + 1);
+        print_tree_h(tree->right, depth + 1);
+        break;
+    case NUM:
+        printf("[NUM: %lf]\n", get_num(tree->token));
+        print_tree_h(tree->left, depth + 1);
+        print_tree_h(tree->right, depth + 1);
+        break;
+    default:
+        printf("[ERROR: %u]\n", tree->token.type);
+    }
+}
+
+inline void print_tree(tree_t *tree)
+{
+    print_tree_h(tree, 0);
 }

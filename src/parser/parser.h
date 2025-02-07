@@ -15,16 +15,9 @@
 
 tree_t *parse_file(const char *filepath);
 
-tree_t *sum();
-tree_t *sum_help();
-
-tree_t *product();
-tree_t *product_help();
-
-tree_t *power();
-tree_t *power_help();
-
-tree_t *bracket();
-tree_t *bracket_help();
+tree_t *sum(void);
+tree_t *product(void);
+tree_t *power(void);
+tree_t *bracket(void);
 
 #endif
