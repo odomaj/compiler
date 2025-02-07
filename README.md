@@ -10,7 +10,11 @@ hello world for Dragon Compiler build environment
 ## Instructions
 
 - Build: run scripts/build.py
-- Run: run scripts/run.py
+    - -i {y or n} build image
+    - -e {y or n} build executable 
+- Run: run scripts/run.py -i {input_file} -o {output_file>}
+    - input file should be located in working/inputs
+    - output file is not used but an arbitrary value must be given (future implementations will utilize this file)
 
 ## Known Issues
 
