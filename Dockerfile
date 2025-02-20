@@ -1,4 +1,4 @@
 FROM ubuntu:24.10
 
-RUN apt-get update
-RUN apt-get install -y cmake gcc
+RUN apt update
+RUN apt install -y cmake gcc bison flex
