@@ -14,13 +14,8 @@ def run_container(tag: str, input: str, output: str) -> None:
         [
             "docker",
             "run",
-            "-it",
-            # "--entrypoint",
-            # "/build/run.sh",
-            "--volume",
-            f"{REPO_ROOT.joinpath("src")}:/src",
-            "--volume",
-            f"{REPO_ROOT.joinpath("scripts")}:/scripts",
+            "--entrypoint",
+            "/build/run.sh",
             "--volume",
             f"{BUILD_PATH}:/build",
             "--volume",
@@ -40,11 +35,9 @@ def run_container(tag: str, input: str, output: str) -> None:
 if __name__ == "__main__":
     arg_parser: ArgumentParser = ArgumentParser()
     arg_parser.add_argument("--tag", "-t", default="dragon-compiler")
-    arg_parser.add_argument("--input", "-i", default="")
-    arg_parser.add_argument("--output", "-o", default="")
-    args: Namespace = arg_parser.parse_args()
+    args, extras = arg_parser.parse_known_args()
 
-    if args.input == "" or args.output == "":
+    if len(extras) != 2:
         print("missing input or output file")
         exit(1)
-    run_container(args.tag, args.input, args.output)
+    run_container(args.tag, extras[0], extras[1])

@@ -4,8 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-int yylex(void);
-void yyerror(const char *);
+#include "parser.h"
 
 %}
 
@@ -26,7 +25,8 @@ expr: expr '+' expr
 
 %%
 
-int main()
+int parse(void)
 {
+    scope_t scope;
     return yyparse();
 }

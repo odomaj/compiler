@@ -1,3 +1,3 @@
 #! /bin/bash
 
-./calculator ${INPUT} ${OUTPUT}
+./compiler ${INPUT} ${OUTPUT}
