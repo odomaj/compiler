@@ -4,8 +4,23 @@ project( PARSER C )
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../common )
 
-set( PARSER_SRC parser.c scanner.c )
+find_package(FLEX REQUIRED)
+find_package(BISON REQUIRED)
 
-add_library( parser STATIC ${PARSER_SRC} )
+set( FLEX_SRC scanner.l )
+set( BISON_SRC parser.y )
+
+set( FLEX_TARGET ${CMAKE_CURRENT_BINARY_DIR}/scanner.c )
+set( BISON_TARGET ${CMAKE_CURRENT_BINARY_DIR}/parser.c )
+
+flex_target(lexer ${FLEX_SRC} ${FLEX_TARGET})
+bison_target(parser ${BISON_SRC} ${BISON_TARGET})
+
+add_flex_bison_dependency(lexer parser)
+
+add_library( parser STATIC
+    ${FLEX_TARGET}
+    ${BISON_TARGET}
+)
 
 target_link_libraries( parser PUBLIC common )
