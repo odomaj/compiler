@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 3.10 )
 
-project( CALCULATOR C )
+project( COMPILER C )
 
 add_subdirectory( parser )
 add_subdirectory( scope )

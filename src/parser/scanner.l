@@ -2,24 +2,31 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
+#include <string.h>
 
 #include "parser.h"
-#include "tree.h"
+#include "parser_.h"
 
-#define NUM 256
-#define ID 257
+extern int line_count;
 
 %}
 
+%option nounput
+%x COMMENT
+
 number		[0-9]+
 floating	[0-9]*"."[0-9]+
-ident		[_a-zA-Z][_a-zA-Z0-9]*
+name		[_a-zA-Z][_a-zA-Z0-9]*
 whitespace	[ \t]+
 
 %%
 
-"program"		{ return PROGAM; }
+"(*"			{ BEGIN COMMENT; }
+<COMMENT>.		|
+<COMMENT>\n		{ ; }
+<COMMENT>"*)"	{ BEGIN INITIAL; }
+
+"program"		{ return PROGRAM; }
 "procedure"		{ return PROCEDURE; }
 "function"		{ return FUNCTION; }
 "var"			{ return VAR; }
@@ -37,31 +44,31 @@ whitespace	[ \t]+
 "for"			{ return FOR; }
 "to"			{ return TO; }
 
-"<"				{ return RELOP; }
-"<="			{ return RELOP; }
-">"				{ return RELOP; }
-">="			{ return RELOP; }
-"="				{ return RELOP; }
-"<>"			{ return RELOP; }
+"<"				{ yylval.opval = LT; return RELOP; }
+"<="			{ yylval.opval = LE; return RELOP; }
+">"				{ yylval.opval = GT; return RELOP; }
+">="			{ yylval.opval = GE; return RELOP; }
+"="				{ yylval.opval = EQ; return RELOP; }
+"<>"			{ yylval.opval = NE; return RELOP; }
 
-"+"				{ return ADDOP; }
-"-"				{ return ADDOP; }
-"or"			{ return ADDOP; }
+"+"				{ yylval.opval = PLUS; return ADDOP; }
+"-"				{ yylval.opval = MINUS; return ADDOP; }
+"or"			{ yylval.opval = OR; return ADDOP; }
 
-"*"				{ return MULOP; }
-"/"				{ return MULOP; }
-"div"			{ return MULOP; }
-"mod"			{ return MULOP; }
-"and"			{ return MULOP; }
+"*"				{ yylval.opval = STAR; return MULOP; }
+"/"				{ yylval.opval = SLASH; return MULOP; }
+"div"			{ yylval.opval = DIV; return MULOP; }
+"mod"			{ yylval.opval = MOD; return MULOP; }
+"and"			{ yylval.opval = AND; return MULOP; }
 
 "not"			{ return NOT; }
 
 ":="			{ return ASSOP; }
 ".."			{ return DOTOP; }
 
-{number}		{ return INUM; }
-{floating}		{ return RNUM; }
-{name}			{ return NAME; }
+{number}		{ yylval.ival = atoi( yytext ); return INUM; }
+{floating}		{ yylval.rval = atof( yytext ); return RNUM; }
+{name}			{ yylval.sval = strdup( yytext ); return NAME; }
 {whitespace}	{ ; }
 
 \n				{ line_count++; }
