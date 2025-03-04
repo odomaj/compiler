@@ -49,6 +49,7 @@
 %token BBEGIN END
 %token IF THEN ELSE
 %token WHILE DO
+%token REPEAT UNTIL
 %token FOR TO
 
 %token <ival> INUM
@@ -67,6 +68,10 @@
 %token DOTOP
 
 %token COMMA LOCAL PARAMETER
+
+%token OPEN_P CLOSE_P
+%token OPEN_B CLOSE_B
+%token SEMICOLON COLON DOT
 
 %token ERR
 
@@ -89,13 +94,134 @@
 %type <type_val> standard_type
 
 %type <lname_val> arguments
-%type <lname_val> paramerter_list
+%type <lname_val> parameter_list
 %type <lname_val> declarations
+%type <lname_val> subprogram_declarations
 
 %%
 
 program
-	:
+	: PROGRAM OPEN_P identifier_list CLOSE_P SEMICOLON
+	declarations
+	subprogram_declarations
+	compound_statement
+	DOT
+	;
+
+identifier_list
+	: NAME
+	| identifier_list COMMA NAME
+	;
+
+declarations
+	: declarations VAR identifier_list COLON type SEMICOLON
+	| /* empty */
+	;
+
+type
+	: standard_type
+	| ARRAY OPEN_B range CLOSE_B OF standard_type
+	;
+
+range
+	: INUM DOTOP INUM
+	;
+
+standard_type
+	: INTEGER
+	| REAL
+	;
+
+subprogram_declarations
+	: subprogram_declarations subprogram_declaration SEMICOLON
+	| /* empty */
+	;
+
+subprogram_declaration
+	: subprogram_header
+	| declarations
+	| subprogram_declarations
+	| compound_statement
+	;
+
+subprogram_header
+	: FUNCTION NAME arguments COLON standard_type SEMICOLON
+	| PROCEDURE NAME arguments SEMICOLON
+	;
+
+arguments
+	: OPEN_P parameter_list CLOSE_P
+	| /* empty */
+	;
+
+parameter_list
+	: identifier_list COLON type
+	| parameter_list SEMICOLON identifier_list COLON type
+	;
+
+compound_statement
+	: BBEGIN optional_statements END
+	;
+
+optional_statements
+	: statement_list
+	| /* empty */
+	;
+
+statement_list
+	: statement
+	| statement_list SEMICOLON statement
+	;
+
+statement
+	: variable ASSOP expression
+	| procedure_statement
+	| compound_statement
+	| IF expression THEN statement ELSE statement
+	| IF expression THEN statement
+	| WHILE expression DO statement
+	| REPEAT statement UNTIL expression
+	| FOR NAME ASSOP range DO statement
+	;
+
+variable
+	: NAME
+	| NAME OPEN_B expression CLOSE_B
+	;
+
+procedure_statement
+	: NAME
+	| NAME OPEN_P expression_list CLOSE_P
+	;
+
+expression_list
+	: expression
+	| expression_list COMMA expression
+	;
+
+expression
+	: simple_expression
+	| simple_expression RELOP simple_expression
+	;
+
+simple_expression
+	: term
+	| ADDOP term
+	| simple_expression ADDOP term
+	;
+
+term
+	: factor
+	| term MULOP factor
+	;
+
+factor
+	: NAME
+	| NAME OPEN_P expression_list CLOSE_P
+	| NAME OPEN_B expression CLOSE_B
+	| INUM DOT
+	| OPEN_P expression CLOSE_P
+	| NOT factor
 	;
 
 %%

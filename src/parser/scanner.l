@@ -41,6 +41,8 @@ whitespace	[ \t]+
 "else"			{ return ELSE; }
 "while"			{ return WHILE; }
 "do"			{ return DO; }
+"repeat"		{ return REPEAT; }
+"until"			{ return UNTIL; }
 "for"			{ return FOR; }
 "to"			{ return TO; }
 
@@ -70,6 +72,14 @@ whitespace	[ \t]+
 {floating}		{ yylval.rval = atof( yytext ); return RNUM; }
 {name}			{ yylval.sval = strdup( yytext ); return NAME; }
 {whitespace}	{ ; }
+
+"("				{ return OPEN_P; }
+")"				{ return CLOSE_P; }
+"["				{ return OPEN_B; }
+"]"				{ return CLOSE_B; }
+";"				{ return SEMICOLON; }
+":"				{ return COLON; }
+"."				{ return DOT; }
 
 \n				{ line_count++; }
 .				{ return ERR; }
