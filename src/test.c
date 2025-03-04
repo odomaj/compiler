@@ -6,6 +6,19 @@
 
 #define FILE_PATH_SIZE 256
 
+int test_file(const char *file, int expect_out, char *path, size_t init_path_len)
+{
+    printf("Testing %s\n", file);
+    strcat(path, file);
+    int result = parse(path);
+    if (result == expect_out)
+        printf("\tPassed\n");
+    else
+        printf("\tFailed\n");
+    memset(path + init_path_len, 0, strlen(file));
+    return result == expect_out;
+}
+
 int main(int argc, char **argv)
 {
     if (argc < 1)
@@ -17,88 +30,76 @@ int main(int argc, char **argv)
     strcpy(file_path, argv[0]);
     size_t init_path_len = strlen(argv[0]);
 
+    int total_passed = 0;
+    int total_tests = 0;
+
     char *file = "t1-1a.p";
-    strcat(file_path, file);
-    int result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "t1-1b.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "t1-2.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 0, file_path, init_path_len);
+    total_tests++;
 
     file = "t1-3.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 0, file_path, init_path_len);
+    total_tests++;
 
     file = "t1-4.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 0, file_path, init_path_len);
+    total_tests++;
 
     file = "t1-5.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "t2-2.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "t2-3.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "t3-3.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 0, file_path, init_path_len);
+    total_tests++;
 
     file = "t3-4.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "t4-1.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "t5-2.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "t5-3.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "t5-4.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "t6-1.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "t6-2.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 1, file_path, init_path_len);
+    total_tests++;
 
     file = "test-semantic.p";
-    strcat(file_path, file);
-    result = parse(file_path);
-    memset(file_path + init_path_len, 0, strlen(file));
+    total_passed += test_file(file, 0, file_path, init_path_len);
+    total_tests++;
+
+    printf("Passed %d/%d Tests", total_passed, total_tests);
 }
