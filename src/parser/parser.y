@@ -5,9 +5,9 @@
 
 #include "parser.h"
 
-%}
+extern FILE *yyin;
 
-%parse-param { FILE* fp }
+%}
 
 %union
 {
@@ -228,14 +228,14 @@ factor
 
 int parse(const char *file_path)
 {
-	FILE* file = fopen(file_path, "a");
-	if(file == NULL)
+	yyin = fopen(file_path, "r");
+	if(yyin == NULL)
 	{
-		printf("[ERROR] %s not found\n, file_path");
+		fprintf(stderr, "[ERROR] %s not found\n", file_path);
 		return 1;
 	}
 	scope_t scope;
-	int out = yyparse(file);
-	fclose(file);
+	int out = yyparse();
+	fclose(yyin);
 	return out;
 }

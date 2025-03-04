@@ -1,3 +1,3 @@
 #! /bin/bash
 
-./${EXECUTABLE} ${INPUT} ${OUTPUT}
+$EXECUTABLE $INPUT $OUTPUT

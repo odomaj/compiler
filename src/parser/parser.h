@@ -12,7 +12,7 @@ typedef int ltype_t;
 typedef int lname_t;
 
 int yylex(void);
-void yyerror(FILE *fp, const char *);
+void yyerror(const char *);
 
 int parse(const char *);
 

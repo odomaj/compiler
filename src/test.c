@@ -8,27 +8,28 @@
 
 int test_file(const char *file, int expect_out, char *path, size_t init_path_len)
 {
-    printf("Testing %s\n", file);
+    fprintf(stderr, "Testing %s\n", file);
     strcat(path, file);
     int result = parse(path);
     if (result == expect_out)
-        printf("\tPassed\n");
+        fprintf(stderr, "\tPassed\n");
     else
-        printf("\tFailed\n");
+        fprintf(stderr, "\tFailed\n");
     memset(path + init_path_len, 0, strlen(file));
     return result == expect_out;
 }
 
 int main(int argc, char **argv)
 {
-    if (argc < 1)
+    if (argc < 2)
     {
         printf("No Test Cases Given\n");
+        exit(1);
     }
 
     char file_path[FILE_PATH_SIZE];
-    strcpy(file_path, argv[0]);
-    size_t init_path_len = strlen(argv[0]);
+    strcpy(file_path, argv[1]);
+    size_t init_path_len = strlen(argv[1]);
 
     int total_passed = 0;
     int total_tests = 0;

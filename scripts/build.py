@@ -52,7 +52,7 @@ def build_exe(tag: str, run_test: bool) -> None:
                 "--env",
                 "TEST_TARGET=/build/compiler_test",
                 "--env",
-                "TEST_INPUT=/tests/",
+                "INPUT_DIR=/tests/",
             ]
         )
     build_command.append(tag)

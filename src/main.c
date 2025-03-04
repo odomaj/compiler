@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv)
 {
-    stack_t *stack = make_stack();
-    free_stack(stack);
+    fprintf(stderr, "%s\n ", argv[1]);
+    parse(argv[1]);
     return 0;
 }

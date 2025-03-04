@@ -27,7 +27,7 @@ def run_container(tag: str, input: str, output: str) -> None:
             "--env",
             f"OUTPUT=/working/outputs/{output}",
             "--env",
-            "EXECUTABLE=compiler",
+            "EXECUTABLE=./compiler",
             "--rm",
             tag,
         ]
