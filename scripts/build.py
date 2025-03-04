@@ -23,6 +23,7 @@ def build_image(tag: str) -> None:
 def build_exe(tag: str) -> None:
     SRC_PATH: Path = REPO_ROOT.joinpath("src")
     SCRIPTS_PATH: Path = REPO_ROOT.joinpath("scripts")
+    TESTS_PATH: Path = REPO_ROOT.joinpath("tests")
     BUILD_PATH: Path = REPO_ROOT.joinpath("build")
     BUILD_PATH.mkdir(exist_ok=True)
     subprocess.run(
@@ -37,6 +38,14 @@ def build_exe(tag: str) -> None:
             f"{BUILD_PATH}:/build",
             "--volume",
             f"{SCRIPTS_PATH}:/scripts",
+            "--volume",
+            f"{TESTS_PATH}:/tests",
+            "--env",
+            "BUILD_TARGET=/src",
+            "--env",
+            "TEST_TARGET=/build/compiler_test",
+            "--env",
+            "TEST_INPUT=/tests/",
             "--workdir",
             "/build",
             "--rm",

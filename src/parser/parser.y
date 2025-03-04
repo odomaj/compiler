@@ -1,12 +1,13 @@
 %{
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
 #include "parser.h"
 
 %}
+
+%parse-param { FILE* fp }
 
 %union
 {
@@ -76,10 +77,9 @@
 %token ERR
 
 %type <tval> compound_statement
-%type <tval> optional_statement
+%type <tval> optional_statements
 %type <tval> statement_list
 %type <tval> statement
-%type <tval> matched_statement
 %type <tval> variable
 %type <tval> procedure_statement
 
@@ -226,8 +226,16 @@ factor
 
 %%
 
-int parse(void)
+int parse(const char *file_path)
 {
+	FILE* file = fopen(file_path, "a");
+	if(file == NULL)
+	{
+		printf("[ERROR] %s not found\n, file_path");
+		return 1;
+	}
 	scope_t scope;
-	return yyparse();
+	int out = yyparse(file);
+	fclose(file);
+	return out;
 }

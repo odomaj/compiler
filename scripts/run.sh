@@ -1,3 +1,3 @@
 #! /bin/bash
 
-./compiler ${INPUT} ${OUTPUT}
+./${EXECUTABLE} ${INPUT} ${OUTPUT}

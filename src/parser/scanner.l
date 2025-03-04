@@ -7,10 +7,11 @@
 #include "parser.h"
 #include "parser_.h"
 
-extern int line_count;
+/* extern int line_count; */
 
 %}
 
+%option noyywrap
 %option nounput
 %x COMMENT
 
@@ -81,13 +82,12 @@ whitespace	[ \t]+
 ":"				{ return COLON; }
 "."				{ return DOT; }
 
-\n				{ line_count++; }
+\n				{ /* line_count++; */ }
 .				{ return ERR; }
 
 %%
 
-void yyerror( const char* msg )
+void yyerror( FILE *file, const char* msg )
 {
-	fprintf( stderr, "[ERROR] %s", msg );
-	exit( 1 );
+	fprintf( stderr, "[ERROR] %s\n", msg );
 }

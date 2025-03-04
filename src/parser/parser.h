@@ -1,6 +1,8 @@
 #ifndef COMPILER_PARSER_PARSER_H
 #define COMPILER_PARSER_PARSER_H
 
+#include <stdio.h>
+
 #include "scope.h"
 #include "tree.h"
 
@@ -10,8 +12,8 @@ typedef int ltype_t;
 typedef int lname_t;
 
 int yylex(void);
-void yyerror(const char *);
+void yyerror(FILE *fp, const char *);
 
-int parse(void);
+int parse(const char *);
 
 #endif

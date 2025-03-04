@@ -11,11 +11,21 @@ include_directories( scope )
 include_directories( tree )
 
 set( MAIN_SRC main.c )
-set( TARGET compiler )
+set( MAIN_TARGET compiler )
 
-add_executable( ${TARGET} ${MAIN_SRC} )
+set( TEST_SRC test.c )
+set( TEST_TARGET compiler_test )
 
-target_link_libraries( ${TARGET} PRIVATE 
+add_executable( ${MAIN_TARGET} ${MAIN_SRC} )
+add_executable( ${TEST_TARGET} ${TEST_SRC} )
+
+target_link_libraries( ${MAIN_TARGET} PRIVATE 
+    parser
+    scope
+    tree
+)
+
+target_link_libraries( ${TEST_TARGET} PRIVATE 
     parser
     scope
     tree
