@@ -11,19 +11,19 @@ int test_file(const char *file, int expect_out, char *path, size_t init_path_len
     fprintf(stderr, "Testing %s\n", file);
     strcat(path, file);
     int result = parse(path);
-    if (result == expect_out)
+    if (result == 0)
         fprintf(stderr, "\tPassed\n");
     else
         fprintf(stderr, "\tFailed\n");
     memset(path + init_path_len, 0, strlen(file));
-    return result == expect_out;
+    return result == 0;
 }
 
 int main(int argc, char **argv)
 {
     if (argc < 2)
     {
-        printf("No Test Cases Given\n");
+        fprintf(stderr, "No Test Cases Given\n");
         exit(1);
     }
 
@@ -102,5 +102,5 @@ int main(int argc, char **argv)
     total_passed += test_file(file, 0, file_path, init_path_len);
     total_tests++;
 
-    printf("Passed %d/%d Tests", total_passed, total_tests);
+    fprintf(stderr, "Passed %d/%d Tests", total_passed, total_tests);
 }
