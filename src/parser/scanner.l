@@ -73,7 +73,8 @@ whitespace	[ \t\r\n]+
 {name}			{ fprintf(stderr, "[name]"); yylval.sval = strdup( yytext ); return NAME; }
 {whitespace}	{ ; }
 
-"("				{ fprintf(stderr, "("); return OPEN_P; }
+","				{ fprintf(stderr, "[,]"); return COMMA; }
+"("				{ fprintf(stderr, "[(]"); return OPEN_P; }
 ")"				{ fprintf(stderr, "[)]"); return CLOSE_P; }
 "["				{ fprintf(stderr, "[[]"); return OPEN_B; }
 "]"				{ fprintf(stderr, "[]]"); return CLOSE_B; }
@@ -88,4 +89,5 @@ whitespace	[ \t\r\n]+
 void yyerror( const char* msg )
 {
 	fprintf( stderr, "[ERROR] %s\n", msg );
+	YY_FLUSH_BUFFER;
 }

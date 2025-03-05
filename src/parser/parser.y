@@ -219,7 +219,8 @@ factor
 	: NAME
 	| NAME OPEN_P expression_list CLOSE_P
 	| NAME OPEN_B expression CLOSE_B
-	| INUM DOT
+	| INUM
+	| RNUM
 	| OPEN_P expression CLOSE_P
 	| NOT factor
 	;
