@@ -101,7 +101,7 @@ extern FILE *yyin;
 %%
 
 program
-	: PROGRAM OPEN_P identifier_list CLOSE_P SEMICOLON
+	: PROGRAM NAME OPEN_P identifier_list CLOSE_P SEMICOLON
 	declarations
 	subprogram_declarations
 	compound_statement
