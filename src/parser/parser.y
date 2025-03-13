@@ -141,9 +141,9 @@ subprogram_declarations
 
 subprogram_declaration
 	: subprogram_header
-	| declarations
-	| subprogram_declarations
-	| compound_statement
+		declarations
+		subprogram_declarations
+		compound_statement
 	;
 
 subprogram_header
