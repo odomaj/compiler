@@ -1,18 +1,20 @@
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "list.h"
 
-void allocate_list(list_t *dest)
+list_t *new_list(const char *name)
 {
-}
+	list_t *list = malloc(sizeof(*list));
+	assert(list != NULL);
 
-inline list_t *make_list(void)
-{
-	list_t *dest = malloc(sizeof(*dest));
-	assert(dest != NULL);
-	(void)allocate_list(dest);
-	return dest;
+	list->name = strdup(name);
+	list->class = 0;
+	list->type = 0;
+
+	list->next = NULL;
+	return list;
 }
 
 void free_list(list_t *list)

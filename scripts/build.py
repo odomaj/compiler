@@ -3,7 +3,6 @@ from argparse import ArgumentParser, Namespace
 import shutil
 import subprocess
 
-
 REPO_ROOT: Path = Path(__file__).parent.parent
 
 
@@ -87,6 +86,7 @@ if __name__ == "__main__":
             f"[ERROR] {args.run_tests} not an option for --run_tests flag,"
             " enter y or n"
         )
+        exit(1)
     if args.exe == "y":
         build_exe(args.tag, run_tests)
     elif args.exe != "n":

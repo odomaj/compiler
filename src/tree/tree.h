@@ -59,6 +59,7 @@
 
 #define NOT_T 0
 #define ARRAY_T 1
+#define FUNCTION_T 2
 
 typedef struct tree_s
 {

@@ -9,7 +9,7 @@ scope_t *make_scope(void)
 	assert(scope != NULL);
 	scope->prev = NULL;
 	for (int i = 0; i < TABLE_SIZE; i++)
-		(void)allocate_list(&(scope->table[i]));
+		scope->table[i] = NULL;
 	return scope;
 }
 
@@ -18,7 +18,7 @@ scope_t *free_scope(scope_t *scope)
 	if (scope == NULL)
 		return NULL;
 	for (int i = 0; i < TABLE_SIZE; i++)
-		(void)free_list(&(scope->table[i]));
+		(void)free_list(scope->table[i]);
 	scope_t *prev = scope->prev;
 	(void)free(scope);
 	return prev;
@@ -53,10 +53,35 @@ size_t hash(const char *str)
 	return (size_t)h;
 }
 
-uint8_t insert_scope(scope_t *scope, const char *name)
+void insert_scope(scope_t *scope, const char *name)
 {
+	size_t i = hash(name);
+	if (scope->table[i] == NULL)
+		scope->table[i] = new_list(name);
 }
 
 list_t *search_scope(scope_t *scope, const char *name)
 {
+	size_t i = hash(name);
+	while (scope != NULL)
+	{
+		list_t *hit = search_list(scope->table[i], name);
+		if (hit != NULL)
+			return hit;
+		scope = scope->prev;
+	}
+	return NULL;
+}
+
+list_t *search_scope_depth(scope_t *scope, const char *name, size_t depth)
+{
+	size_t i = hash(name);
+	while (scope != NULL && depth--)
+	{
+		list_t *hit = search_list(scope->table[i], name);
+		if (hit != NULL)
+			return hit;
+		scope = scope->prev;
+	}
+	return NULL;
 }

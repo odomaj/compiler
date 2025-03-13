@@ -5,7 +5,7 @@
 
 #define TABLE_SIZE 211
 
-typedef list_t table_t[TABLE_SIZE];
+typedef list_t *table_t[TABLE_SIZE];
 
 typedef struct scope_s
 {
@@ -21,7 +21,8 @@ scope_t *pop_scope(scope_t *scope);
 
 size_t hash(const char *str);
 
-uint8_t insert_scope(scope_t *scope, const char *name);
+void insert_scope(scope_t *scope, const char *name);
 list_t *search_scope(scope_t *scope, const char *name);
+list_t *search_scope_depth(scope_t *scope, const char *name, size_t depth);
 
 #endif

@@ -7,6 +7,7 @@
 
 extern FILE *yyin;
 scope_t* scope;
+size_t scope_depth = 0;
 
 %}
 
@@ -218,9 +219,11 @@ term
 
 factor
 	: NAME
+		{ $$ = tree_sym( search_scope_depth( scope, $1, scope_depth ) ); }
 	| NAME OPEN_P expression_list CLOSE_P
+		{ $$ = tree_op( FUNCTION_T, tree_sym( search_scope( scope, $1 ) ), $3 ); }
 	| NAME OPEN_B expression CLOSE_B
-		{ $$ = tree_op( ARRAY_T, tree_sym( search_scope( scope, $1 ) ), $3 ); }
+		{ $$ = tree_op( ARRAY_T, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
 	| INUM
 		{ $$ = tree_inum( $1 ); }
 	| RNUM
@@ -234,7 +237,7 @@ factor
 %%
 
 int parse(const char *file_path)
-{\
+{
 	yyin = fopen(file_path, "r");
 	if(yyin == NULL)
 	{

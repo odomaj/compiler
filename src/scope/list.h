@@ -3,17 +3,18 @@
 
 #include <stdint.h>
 
-typedef struct
+typedef struct list_s
 {
 	char *name;
 	// NAME FUNCTION PARAMETER
 	uint8_t class;
 
 	uint8_t type;
+
+	struct list_s *next;
 } list_t;
 
-list_t *make_list(void);
-void allocate_list(list_t *dest);
+list_t *new_list(const char *name);
 void free_list(list_t *list);
 
 uint8_t insert_list(list_t *scope, const char *name);
