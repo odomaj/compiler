@@ -10,19 +10,18 @@ typedef list_t table_t[TABLE_SIZE];
 typedef struct scope_s
 {
 	table_t table;
-	struct scope_s *next;
 	struct scope_s *prev;
 } scope_t;
 
-typedef struct
-{
-	scope_t base;
-} stack_t;
+scope_t *make_scope(void);
+scope_t *free_scope(scope_t *scope);
 
-scope_t *make_scope(scope_t *prev);
-void free_scope(scope_t *);
+scope_t *push_scope(scope_t *scope);
+scope_t *pop_scope(scope_t *scope);
 
-stack_t *make_stack(void);
-void free_stack(stack_t *);
+size_t hash(const char *str);
+
+uint8_t insert_scope(scope_t *scope, const char *name);
+list_t *search_scope(scope_t *scope, const char *name);
 
 #endif

@@ -52,20 +52,33 @@
 #define AND 4
 */
 
+#define IVAL 0
+#define RVAL 1
+#define SVAL 2
+#define OPVAL 3
+
+#define NOT_T 0
+#define ARRAY_T 1
+
 typedef struct tree_s
 {
+    uint8_t label;
     uint8_t type;
     union
     {
         int ival;
-        float fval;
+        float rval;
         list_t *sval;
         int op_val;
     } value;
 
     struct tree_s *left;
     struct tree_s *right;
+} syntax_tree_t;
 
-} tree_t;
+syntax_tree_t *tree_inum(int ival);
+syntax_tree_t *tree_rnum(float rval);
+syntax_tree_t *tree_op(uint8_t type, syntax_tree_t *left, syntax_tree_t *right);
+syntax_tree_t *tree_sym(list_t *sval);
 
 #endif

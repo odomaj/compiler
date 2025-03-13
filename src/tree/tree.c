@@ -1,0 +1,60 @@
+#include <stdlib.h>
+#include <assert.h>
+
+#include "tree.h"
+
+syntax_tree_t *tree_inum(int ival)
+{
+    syntax_tree_t *tree = malloc(sizeof(*tree));
+    assert(tree != NULL);
+
+    tree->type = IVAL;
+    tree->value.ival = ival;
+
+    tree->left = NULL;
+    tree->right = NULL;
+
+    return tree;
+}
+
+syntax_tree_t *tree_rnum(float rval)
+{
+    syntax_tree_t *tree = malloc(sizeof(*tree));
+    assert(tree != NULL);
+
+    tree->type = RVAL;
+    tree->value.rval = rval;
+
+    tree->left = NULL;
+    tree->right = NULL;
+
+    return tree;
+}
+
+syntax_tree_t *tree_op(uint8_t type, syntax_tree_t *left, syntax_tree_t *right)
+{
+    syntax_tree_t *tree = malloc(sizeof(*tree));
+    assert(tree != NULL);
+
+    tree->type = OPVAL;
+    tree->value.op_val = type;
+
+    tree->left = left;
+    tree->right = right;
+
+    return tree;
+}
+
+syntax_tree_t *tree_sym(list_t *sval)
+{
+    syntax_tree_t *tree = malloc(sizeof(*tree));
+    assert(tree != NULL);
+
+    tree->type = SVAL;
+    tree->value.sval = sval;
+
+    tree->left = NULL;
+    tree->right = NULL;
+
+    return tree;
+}

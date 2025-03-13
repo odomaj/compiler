@@ -3,45 +3,60 @@
 
 #include "scope.h"
 
-scope_t *make_scope(scope_t *prev)
+scope_t *make_scope(void)
 {
 	scope_t *scope = malloc(sizeof(*scope));
 	assert(scope != NULL);
-	scope->next = NULL;
-	scope->prev = prev;
+	scope->prev = NULL;
 	for (int i = 0; i < TABLE_SIZE; i++)
 		(void)allocate_list(&(scope->table[i]));
 	return scope;
 }
 
-void free_scope(scope_t *scope)
+scope_t *free_scope(scope_t *scope)
 {
-	scope_t *next;
-	while (scope != NULL)
-	{
-		next = scope->next;
-		for (int i = 0; i < TABLE_SIZE; i++)
-			(void)free_list(&(scope->table[i]));
-		(void)free(scope);
-		scope = next;
-	}
-}
-
-stack_t *make_stack(void)
-{
-	stack_t *stack = malloc(sizeof(*stack));
-	assert(stack != NULL);
-	stack->base.next = NULL;
-	stack->base.prev = NULL;
+	if (scope == NULL)
+		return NULL;
 	for (int i = 0; i < TABLE_SIZE; i++)
-		(void)allocate_list(&(stack->base.table[i]));
-	return stack;
+		(void)free_list(&(scope->table[i]));
+	scope_t *prev = scope->prev;
+	(void)free(scope);
+	return prev;
 }
 
-void free_stack(stack_t *stack)
+inline scope_t *push_scope(scope_t *scope)
 {
-	if (stack == NULL)
-		return;
-	(void)free_scope(stack->base.next);
-	(void)free(stack);
+	scope_t *new_scope = make_scope();
+	new_scope->prev = scope;
+	return new_scope;
+}
+
+inline scope_t *pop_scope(scope_t *scope)
+{
+	scope_t *prev = scope->prev;
+	free_scope(scope);
+	return prev;
+}
+
+// https://en.m.wikipedia.org/wiki/PJW_hash_function
+size_t hash(const char *str)
+{
+	uint32_t h = 0, high;
+	while (*str)
+	{
+		h = (h << 4) + *str++;
+		if (high = h & 0xF0000000)
+			h ^= high >> 24;
+		h &= ~high;
+	}
+	assert(h < TABLE_SIZE);
+	return (size_t)h;
+}
+
+uint8_t insert_scope(scope_t *scope, const char *name)
+{
+}
+
+list_t *search_scope(scope_t *scope, const char *name)
+{
 }

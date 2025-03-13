@@ -7,10 +7,12 @@ set (CMAKE_C_STANDARD 11)
 add_subdirectory( parser )
 add_subdirectory( scope )
 add_subdirectory( tree )
+add_subdirectory( code_gen )
 
 include_directories( parser )
 include_directories( scope )
 include_directories( tree )
+include_directories( code_gen )
 
 set( MAIN_SRC main.c )
 set( MAIN_TARGET compiler )
@@ -25,10 +27,12 @@ target_link_libraries( ${MAIN_TARGET} PRIVATE
     parser
     scope
     tree
+    code_gen
 )
 
 target_link_libraries( ${TEST_TARGET} PRIVATE 
     parser
     scope
     tree
+    code_gen
 )

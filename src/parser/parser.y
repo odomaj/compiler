@@ -6,6 +6,7 @@
 #include "parser.h"
 
 extern FILE *yyin;
+scope_t* scope;
 
 %}
 
@@ -32,7 +33,7 @@ extern FILE *yyin;
 	 */
 
 	// syntax tree value
-	tree_t *tval;
+	syntax_tree_t *tval;
 
 	// type value
 	ptype_t *type_val;
@@ -90,13 +91,13 @@ extern FILE *yyin;
 %type <tval> factor
 
 %type <tval> identifier_list
-%type <type_val> type
-%type <type_val> standard_type
+%type <tval> type
+%type <tval> standard_type
 
-%type <lname_val> arguments
-%type <lname_val> parameter_list
-%type <lname_val> declarations
-%type <lname_val> subprogram_declarations
+%type <tval> arguments
+%type <tval> parameter_list
+%type <tval> declarations
+%type <tval> subprogram_declarations
 
 %%
 
@@ -114,8 +115,8 @@ identifier_list
 	;
 
 declarations
-	: declarations VAR identifier_list COLON type SEMICOLON
-	| /* empty */
+	: /* empty */
+	| declarations VAR identifier_list COLON type SEMICOLON
 	;
 
 type
@@ -133,8 +134,8 @@ standard_type
 	;
 
 subprogram_declarations
-	: subprogram_declarations subprogram_declaration SEMICOLON
-	| /* empty */
+	: /* empty */
+	| subprogram_declarations subprogram_declaration SEMICOLON
 	;
 
 subprogram_declaration
@@ -150,8 +151,8 @@ subprogram_header
 	;
 
 arguments
-	: OPEN_P parameter_list CLOSE_P
-	| /* empty */
+	: /* empty */
+	| OPEN_P parameter_list CLOSE_P
 	;
 
 parameter_list
@@ -164,8 +165,8 @@ compound_statement
 	;
 
 optional_statements
-	: statement_list
-	| /* empty */
+	: /* empty */
+	| statement_list
 	;
 
 statement_list
@@ -219,24 +220,34 @@ factor
 	: NAME
 	| NAME OPEN_P expression_list CLOSE_P
 	| NAME OPEN_B expression CLOSE_B
+		{ $$ = tree_op( ARRAY_T, tree_sym( search_scope( scope, $1 ) ), $3 ); }
 	| INUM
+		{ $$ = tree_inum( $1 ); }
 	| RNUM
+		{ $$ = tree_rnum( $1 ); }
 	| OPEN_P expression CLOSE_P
+		{ $$ = $2; }
 	| NOT factor
+		{ $$ = tree_op( NOT_T, $2, NULL ); }
 	;
 
 %%
 
 int parse(const char *file_path)
-{
+{\
 	yyin = fopen(file_path, "r");
 	if(yyin == NULL)
 	{
 		fprintf(stderr, "[ERROR] %s not found\n", file_path);
 		return 1;
 	}
-	scope_t scope;
+
+	scope = make_scope();
+
 	int out = yyparse();
 	fclose(yyin);
+
+	(void)free_scope(scope);
+
 	return out;
 }
