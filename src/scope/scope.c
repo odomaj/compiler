@@ -49,8 +49,7 @@ size_t hash(const char *str)
 			h ^= high >> 24;
 		h &= ~high;
 	}
-	assert(h < TABLE_SIZE);
-	return (size_t)h;
+	return (size_t)(h % TABLE_SIZE);
 }
 
 void insert_scope(scope_t *scope, const char *name)
