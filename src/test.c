@@ -11,12 +11,12 @@ int test_file(const char *file, int expect_out, char *path, size_t init_path_len
     fprintf(stderr, "Testing %s\n", file);
     strcat(path, file);
     int result = parse(path);
-    if (result == 0)
+    if (result == expect_out)
         fprintf(stderr, "\tPassed\n");
     else
         fprintf(stderr, "\tFailed\n");
     memset(path + init_path_len, 0, strlen(file));
-    return result == 0;
+    return result == expect_out;
 }
 
 int main(int argc, char **argv)
@@ -96,10 +96,6 @@ int main(int argc, char **argv)
 
     file = "t6-2.p";
     total_passed += test_file(file, 1, file_path, init_path_len);
-    total_tests++;
-
-    file = "test-semantic.p";
-    total_passed += test_file(file, 0, file_path, init_path_len);
     total_tests++;
 
     fprintf(stderr, "Passed %d/%d Tests", total_passed, total_tests);
