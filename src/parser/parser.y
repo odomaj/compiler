@@ -184,6 +184,7 @@ statement
 	| WHILE expression DO statement
 	| REPEAT statement UNTIL expression
 	| FOR NAME ASSOP range DO statement
+	| FOR NAME ASSOP INUM TO INUM DO statement
 	;
 
 variable

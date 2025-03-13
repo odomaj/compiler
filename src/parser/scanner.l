@@ -80,7 +80,7 @@ whitespace	[ \t\r\n]+
 "]"				{ fprintf(stderr, "[]]"); return CLOSE_B; }
 ";"				{ fprintf(stderr, "[;]"); return SEMICOLON; }
 ":"				{ fprintf(stderr, "[:]"); return COLON; }
-"."				{ fprintf(stderr, "[.]"); return DOT; }
+"."				{ fprintf(stderr, "[.]\n"); return DOT; }
 
 .				{ fprintf(stderr, "[err]"); return ERR; }
 
