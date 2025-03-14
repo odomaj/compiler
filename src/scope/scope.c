@@ -33,9 +33,7 @@ inline scope_t *push_scope(scope_t *scope)
 
 inline scope_t *pop_scope(scope_t *scope)
 {
-	scope_t *prev = scope->prev;
-	free_scope(scope);
-	return prev;
+	return free_scope(scope);
 }
 
 // https://en.m.wikipedia.org/wiki/PJW_hash_function
@@ -52,11 +50,10 @@ size_t hash(const char *str)
 	return (size_t)(h % TABLE_SIZE);
 }
 
-void insert_scope(scope_t *scope, const char *name)
+inline void insert_scope(scope_t *scope, const char *name)
 {
-	size_t i = hash(name);
-	if (scope->table[i] == NULL)
-		scope->table[i] = new_list(name);
+	uint32_t i = hash(name);
+	scope->table[i] = insert_list(scope->table[i], name);
 }
 
 list_t *search_scope(scope_t *scope, const char *name)

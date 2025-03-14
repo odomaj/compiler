@@ -17,8 +17,8 @@ typedef struct list_s
 list_t *new_list(const char *name);
 void free_list(list_t *list);
 
-uint8_t insert_list(list_t *scope, const char *name);
+list_t *insert_list(list_t *list, const char *name);
 
-list_t *search_list(list_t *scope, const char *name);
+list_t *search_list(list_t *list, const char *name);
 
 #endif

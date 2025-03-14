@@ -60,6 +60,14 @@
 #define NOT_T 0
 #define ARRAY_T 1
 #define FUNCTION_T 2
+#define MULOP_T 3
+#define ADDOP_T 4
+
+typedef struct
+{
+    uint8_t class;
+    uint8_t value;
+} operator_t;
 
 typedef struct tree_s
 {
@@ -70,7 +78,7 @@ typedef struct tree_s
         int ival;
         float rval;
         list_t *sval;
-        int op_val;
+        operator_t op_val;
     } value;
 
     struct tree_s *left;
@@ -79,7 +87,7 @@ typedef struct tree_s
 
 syntax_tree_t *tree_inum(int ival);
 syntax_tree_t *tree_rnum(float rval);
-syntax_tree_t *tree_op(uint8_t type, syntax_tree_t *left, syntax_tree_t *right);
+syntax_tree_t *tree_op(uint8_t type, uint8_t value, syntax_tree_t *left, syntax_tree_t *right);
 syntax_tree_t *tree_sym(list_t *sval);
 
 #endif

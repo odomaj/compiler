@@ -209,22 +209,27 @@ expression
 
 simple_expression
 	: term
+		{ $$ = $1; }
 	| ADDOP term
+		{ $$ = tree_op( ADDOP_T, yylval.opval, $2, NULL ); }
 	| simple_expression ADDOP term
+		{ $$ = tree_op( ADDOP_T, yylval.opval, $1, $3 ); }
 	;
 
 term
 	: factor
+		{ $$ = $1; }
 	| term MULOP factor
+		{ $$ = tree_op( MULOP_T, yylval.opval, $1, $3 ); }
 	;
 
 factor
 	: NAME
 		{ $$ = tree_sym( search_scope_depth( scope, $1, scope_depth ) ); }
 	| NAME OPEN_P expression_list CLOSE_P
-		{ $$ = tree_op( FUNCTION_T, tree_sym( search_scope( scope, $1 ) ), $3 ); }
+		{ $$ = tree_op( FUNCTION_T, 0, tree_sym( search_scope( scope, $1 ) ), $3 ); }
 	| NAME OPEN_B expression CLOSE_B
-		{ $$ = tree_op( ARRAY_T, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
+		{ $$ = tree_op( ARRAY_T, 0, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
 	| INUM
 		{ $$ = tree_inum( $1 ); }
 	| RNUM
@@ -232,7 +237,7 @@ factor
 	| OPEN_P expression CLOSE_P
 		{ $$ = $2; }
 	| NOT factor
-		{ $$ = tree_op( NOT_T, $2, NULL ); }
+		{ $$ = tree_op( NOT_T, 0, $2, NULL ); }
 	;
 
 %%

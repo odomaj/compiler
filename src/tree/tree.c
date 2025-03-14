@@ -31,13 +31,14 @@ syntax_tree_t *tree_rnum(float rval)
     return tree;
 }
 
-syntax_tree_t *tree_op(uint8_t type, syntax_tree_t *left, syntax_tree_t *right)
+syntax_tree_t *tree_op(uint8_t type, uint8_t value, syntax_tree_t *left, syntax_tree_t *right)
 {
     syntax_tree_t *tree = malloc(sizeof(*tree));
     assert(tree != NULL);
 
     tree->type = OPVAL;
-    tree->value.op_val = type;
+    tree->value.op_val.class = type;
+    tree->value.op_val.value = value;
 
     tree->left = left;
     tree->right = right;

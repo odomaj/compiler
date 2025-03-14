@@ -19,12 +19,29 @@ list_t *new_list(const char *name)
 
 void free_list(list_t *list)
 {
+	while (list != NULL)
+	{
+		list_t *next = list->next;
+		(void)free(list->name);
+		(void)free(list);
+		list = next;
+	}
 }
 
-uint8_t insert_list(list_t *scope, const char *name)
+inline list_t *insert_list(list_t *list, const char *name)
 {
+	list_t *new_entry = new_list(name);
+	new_entry->next = list;
+	return new_entry;
 }
 
-list_t *search_list(list_t *scope, const char *name)
+list_t *search_list(list_t *list, const char *name)
 {
+	while (list != NULL)
+	{
+		if (strcmp(name, list->name) == 0)
+			return list;
+		list = list->next;
+	}
+	return NULL;
 }
