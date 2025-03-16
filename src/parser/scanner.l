@@ -26,63 +26,319 @@ whitespace	[ \t\r\n]+
 <COMMENT>\n		{ ; }
 <COMMENT>"*)"	{ BEGIN INITIAL; }
 
-"program"		{ fprintf(stderr, "[program]"); return PROGRAM; }
-"procedure"		{ fprintf(stderr, "[procedure]"); return PROCEDURE; }
-"function"		{ fprintf(stderr, "[function]"); return FUNCTION; }
-"var"			{ fprintf(stderr, "[var]"); return VAR; }
-"array"			{ fprintf(stderr, "[array]"); return ARRAY; }
-"of"			{ fprintf(stderr, "[of]"); return OF; }
-"begin"			{ fprintf(stderr, "[begin]"); return BBEGIN; }
-"end"			{ fprintf(stderr, "[end]"); return END; }
-"integer"		{ fprintf(stderr, "[integer]"); return INTEGER; }
-"real"			{ fprintf(stderr, "[real]"); return REAL; }
-"if"			{ fprintf(stderr, "[if]"); return IF; }
-"then"			{ fprintf(stderr, "[then]"); return THEN; }
-"else"			{ fprintf(stderr, "[else]"); return ELSE; }
-"while"			{ fprintf(stderr, "[while]"); return WHILE; }
-"do"			{ fprintf(stderr, "[do]"); return DO; }
-"repeat"		{ fprintf(stderr, "[repeat]"); return REPEAT; }
-"until"			{ fprintf(stderr, "[until]"); return UNTIL; }
-"for"			{ fprintf(stderr, "[for]"); return FOR; }
-"to"			{ fprintf(stderr, "[to]"); return TO; }
+"program"		{ 
+				#ifndef NDEBUG
+					fprintf(stderr, "[program]");
+				#endif
+					return PROGRAM; 
+				}
+"procedure"		{
+				#ifndef NDEBUG
+					fprintf(stderr, "[procedure]");
+				#endif
+					return PROCEDURE;
+				}
+"function"		{
+				#ifndef NDEBUG
+					fprintf(stderr, "[function]");
+				#endif
+					return FUNCTION;
+				}
+"var"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[var]");
+				#endif
+					return VAR;
+				}
+"array"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[array]");
+				#endif
+					return ARRAY;
+				}
+"of"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[of]");
+				#endif
+					return OF;
+				}
+"begin"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[begin]");
+				#endif
+					return BBEGIN;
+				}
+"end"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[end]");
+				#endif
+					return END;
+				}
+"integer"		{
+				#ifndef NDEBUG
+					fprintf(stderr, "[integer]");
+				#endif
+					return INTEGER;
+				}
+"real"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[real]");
+				#endif
+					return REAL;
+				}
+"if"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[if]");
+				#endif
+					return IF;
+				}
+"then"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[then]");
+				#endif
+					return THEN;
+				}
+"else"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[else]");
+				#endif
+					return ELSE;
+				}
+"while"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[while]");
+				#endif
+					return WHILE;
+				}
+"do"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[do]");
+				#endif
+					return DO;
+				}
+"repeat"		{
+				#ifndef NDEBUG
+					fprintf(stderr, "[repeat]");
+				#endif
+					return REPEAT;
+				}
+"until"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[until]");
+				#endif
+					return UNTIL;
+				}
+"for"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[for]");
+				#endif
+					return FOR;
+				}
+"to"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[to]");
+				#endif
+					return TO;
+				}
 
-"<"				{ fprintf(stderr, "[<]"); yylval.opval = LT; return RELOP; }
-"<="			{ fprintf(stderr, "[<=]"); yylval.opval = LE; return RELOP; }
-">"				{ fprintf(stderr, "[>]"); yylval.opval = GT; return RELOP; }
-">="			{ fprintf(stderr, "[>=]"); yylval.opval = GE; return RELOP; }
-"="				{ fprintf(stderr, "[=]"); yylval.opval = EQ; return RELOP; }
-"<>"			{ fprintf(stderr, "[<>]"); yylval.opval = NE; return RELOP; }
+"<"				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[<]");
+				#endif
+					yylval.opval = LT;
+					return RELOP;
+				}
+"<="			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[<=]");
+				#endif
+					yylval.opval = LE;
+					return RELOP; }
+">"				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[>]");
+				#endif
+					yylval.opval = GT;
+					return RELOP;
+				}
+">="			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[>=]");
+				#endif
+					yylval.opval = GE;
+					return RELOP;
+				}
+"="				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[=]");
+				#endif
+					yylval.opval = EQ;
+					return RELOP;
+				}
+"<>"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[<>]");
+				#endif
+					yylval.opval = NE;
+					return RELOP;
+				}
 
-"+"				{ fprintf(stderr, "[+]"); yylval.opval = PLUS; return ADDOP; }
-"-"				{ fprintf(stderr, "[-]"); yylval.opval = MINUS; return ADDOP; }
-"or"			{ fprintf(stderr, "[or]"); yylval.opval = OR; return ADDOP; }
+"+"				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[+]");
+				#endif
+					yylval.opval = PLUS;
+					return ADDOP;
+				}
+"-"				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[-]");
+				#endif
+					yylval.opval = MINUS;
+					return ADDOP;
+				}
+"or"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[or]");
+				#endif
+					yylval.opval = OR;
+					return ADDOP;
+				}
 
-"*"				{ fprintf(stderr, "[*]"); yylval.opval = STAR; return MULOP; }
-"/"				{ fprintf(stderr, "[/]"); yylval.opval = SLASH; return MULOP; }
-"div"			{ fprintf(stderr, "[div]"); yylval.opval = DIV; return MULOP; }
-"mod"			{ fprintf(stderr, "[mod]"); yylval.opval = MOD; return MULOP; }
-"and"			{ fprintf(stderr, "[and]"); yylval.opval = AND; return MULOP; }
+"*"				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[*]");
+				#endif
+					yylval.opval = STAR;
+					return MULOP;
+				}
+"/"				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[/]");
+				#endif
+					yylval.opval = SLASH;
+					return MULOP;
+				}
+"div"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[div]");
+				#endif
+					yylval.opval = DIV;
+					return MULOP;
+				}
+"mod"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[mod]");
+				#endif
+					yylval.opval = MOD;
+					return MULOP;
+				}
+"and"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[and]");
+				#endif
+					yylval.opval = AND;
+					return MULOP;
+				}
 
-"not"			{ fprintf(stderr, "[not]"); return NOT; }
+"not"			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[not]");
+				#endif
+					return NOT;
+				}
 
-":="			{ fprintf(stderr, "[:=]"); return ASSOP; }
-".."			{ fprintf(stderr, "[..]"); return DOTOP; }
+":="			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[:=]");
+				#endif
+					return ASSOP;
+				}
+".."			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[..]");
+				#endif
+					return DOTOP;
+				}
 
-{number}		{ fprintf(stderr, "[number]"); yylval.ival = atoi( yytext ); return INUM; }
-{floating}		{ fprintf(stderr, "[float]"); yylval.rval = atof( yytext ); return RNUM; }
-{name}			{ fprintf(stderr, "[name]"); yylval.sval = strdup( yytext ); return NAME; }
+{number}		{
+				#ifndef NDEBUG
+					fprintf(stderr, "[number]");
+				#endif
+					yylval.ival = atoi( yytext );
+					return INUM;
+				}
+{floating}		{
+				#ifndef NDEBUG
+					fprintf(stderr, "[float]");
+				#endif
+					yylval.rval = atof( yytext );
+					return RNUM;
+				}
+{name}			{
+				#ifndef NDEBUG
+					fprintf(stderr, "[name]");
+				#endif
+					yylval.sval = strdup( yytext );
+					return NAME;
+				}
 {whitespace}	{ ; }
 
-","				{ fprintf(stderr, "[,]"); return COMMA; }
-"("				{ fprintf(stderr, "[(]"); return OPEN_P; }
-")"				{ fprintf(stderr, "[)]"); return CLOSE_P; }
-"["				{ fprintf(stderr, "[[]"); return OPEN_B; }
-"]"				{ fprintf(stderr, "[]]"); return CLOSE_B; }
-";"				{ fprintf(stderr, "[;]"); return SEMICOLON; }
-":"				{ fprintf(stderr, "[:]"); return COLON; }
-"."				{ fprintf(stderr, "[.]\n"); return DOT; }
+","				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[,]");
+				#endif
+					return COMMA;
+				}
+"("				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[(]");
+				#endif
+					return OPEN_P;
+				}
+")"				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[)]");
+				#endif
+					return CLOSE_P;
+				}
+"["				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[[]");
+				#endif
+					return OPEN_B;
+				}
+"]"				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[]]");
+				#endif
+					return CLOSE_B;
+				}
+";"				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[;]");
+				#endif
+					return SEMICOLON;
+				}
+":"				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[:]");
+				#endif
+					return COLON;
+				}
+"."				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[.]\n");
+				#endif
+					return DOT;
+				}
 
-.				{ fprintf(stderr, "[err]"); return ERR; }
+.				{
+				#ifndef NDEBUG
+					fprintf(stderr, "[err]");
+				#endif
+					return ERR;
+				}
 
 %%
 

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-cmake $BUILD_TARGET
+cmake $BUILD_FLAG $BUILD_TARGET
 cmake --build .
 
 if [[ ! -z $TEST_TARGET ]]; then
