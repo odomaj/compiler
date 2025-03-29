@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "tree.h"
 #include "parser.h"
 
 #define FILE_PATH_SIZE 256
@@ -10,7 +10,9 @@ int test_file(const char *file, int expect_out, char *path, size_t init_path_len
 {
     fprintf(stderr, "Testing %s\n", file);
     strcat(path, file);
-    int result = parse(path);
+    syntax_tree_t *tree;
+    int result = parse(path, &tree);
+    (void)free_tree(tree);
     if (result == expect_out)
         fprintf(stderr, "\tPassed\n");
     else

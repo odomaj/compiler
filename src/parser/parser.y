@@ -37,6 +37,8 @@ size_t scope_depth = 0;
 	syntax_tree_t *tval;
 }
 
+%parse-param { syntax_tree_t** tree }
+
 %token PROGRAM FUNCTION PROCEDURE
 %token VAR ARRAY OF
 %token INTEGER REAL
@@ -69,7 +71,6 @@ size_t scope_depth = 0;
 
 %token ERR
 
-%type <tval> program
 %type <tval> identifier_list
 %type <tval> declarations
 %type <tval> type
@@ -100,7 +101,7 @@ program
 	subprogram_declarations
 	compound_statement
 	DOT
-		{ $$ = tree_rule( TREE_PROGRAM, RULE_1, $4, tree_rule( TREE_PROGRAM, RULE_1, $7, tree_rule( TREE_PROGRAM, RULE_1, $8, $9 ) ) ); }
+		{ *tree = tree_rule( TREE_PROGRAM, RULE_1, $4, tree_rule( TREE_PROGRAM, RULE_1, $7, tree_rule( TREE_PROGRAM, RULE_1, $8, $9 ) ) ); }
 	;
 
 identifier_list
@@ -275,7 +276,9 @@ factor
 
 %%
 
-int parse(const char *file_path)
+// for semantic checks YYABORT reports failure
+
+int parse(const char *file_path, syntax_tree_t** dest)
 {
 	yyin = fopen(file_path, "r");
 	if(yyin == NULL)
@@ -286,10 +289,8 @@ int parse(const char *file_path)
 
 	scope = make_scope();
 
-	int out = yyparse();
+	int out = yyparse(dest);
 	fclose(yyin);
-
-	(void)free_scope(scope);
 
 	return out;
 }

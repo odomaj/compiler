@@ -88,3 +88,8 @@ syntax_tree_t *tree_type(uint8_t type)
 
     return tree;
 }
+
+void free_tree(syntax_tree_t *tree)
+{
+    return;
+}

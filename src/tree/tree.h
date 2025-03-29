@@ -91,4 +91,6 @@ syntax_tree_t *tree_sym(list_t *sval);
 syntax_tree_t *tree_rule(uint8_t rule, uint8_t option, syntax_tree_t *left, syntax_tree_t *right);
 syntax_tree_t *tree_type(uint8_t type);
 
+void free_tree(syntax_tree_t *tree);
+
 #endif
