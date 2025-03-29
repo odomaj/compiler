@@ -59,3 +59,32 @@ syntax_tree_t *tree_sym(list_t *sval)
 
     return tree;
 }
+
+syntax_tree_t *tree_rule(uint8_t rule, uint8_t option, syntax_tree_t *left, syntax_tree_t *right)
+{
+    syntax_tree_t *tree = malloc(sizeof(*tree));
+    assert(tree != NULL);
+
+    tree->type = RULE_VAL;
+    tree->value.rule_val.rule = rule;
+    tree->value.rule_val.option = option;
+
+    tree->left = left;
+    tree->right = right;
+
+    return tree;
+}
+
+syntax_tree_t *tree_type(uint8_t type)
+{
+    syntax_tree_t *tree = malloc(sizeof(*tree));
+    assert(tree != NULL);
+
+    tree->type = TVAL;
+    tree->value.tval.type = type;
+
+    tree->left = NULL;
+    tree->right = NULL;
+
+    return tree;
+}

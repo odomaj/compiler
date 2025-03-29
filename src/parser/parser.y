@@ -35,15 +35,6 @@ size_t scope_depth = 0;
 
 	// syntax tree value
 	syntax_tree_t *tval;
-
-	// type value
-	ptype_t *type_val;
-
-	// type list
-	ltype_t *ltype_val;
-
-	// name list
-	lname_t *lname_val;
 }
 
 %token PROGRAM FUNCTION PROCEDURE
@@ -78,27 +69,28 @@ size_t scope_depth = 0;
 
 %token ERR
 
+%type <tval> program
+%type <tval> identifier_list
+%type <tval> declarations
+%type <tval> type
+%type <tval> range
+%type <tval> standard_type
+%type <tval> subprogram_declarations
+%type <tval> subprogram_declaration
+%type <tval> subprogram_header
+%type <tval> arguments
+%type <tval> parameter_list
 %type <tval> compound_statement
 %type <tval> optional_statements
 %type <tval> statement_list
 %type <tval> statement
 %type <tval> variable
 %type <tval> procedure_statement
-
 %type <tval> expression_list
 %type <tval> expression
 %type <tval> simple_expression
 %type <tval> term
 %type <tval> factor
-
-%type <tval> identifier_list
-%type <tval> type
-%type <tval> standard_type
-
-%type <tval> arguments
-%type <tval> parameter_list
-%type <tval> declarations
-%type <tval> subprogram_declarations
 
 %%
 
@@ -108,136 +100,177 @@ program
 	subprogram_declarations
 	compound_statement
 	DOT
+		{ $$ = tree_rule( TREE_PROGRAM, RULE_1, $4, tree_rule( TREE_PROGRAM, RULE_1, $7, tree_rule( TREE_PROGRAM, RULE_1, $8, $9 ) ) ); }
 	;
 
 identifier_list
 	: NAME
+		{ $$ = tree_rule( TREE_IDENTIFIER_LIST, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) ); }
 	| identifier_list COMMA NAME
+		{ $$ = tree_rule( TREE_IDENTIFIER_LIST, RULE_2, $1, tree_sym( search_scope_depth( scope, $3, scope_depth ) ) ); }
 	;
 
 declarations
 	: /* empty */
+		{ $$ = tree_rule( TREE_DECLARATIONS, RULE_1, NULL, NULL ); }
 	| declarations VAR identifier_list COLON type SEMICOLON
+		{ $$ = tree_rule( TREE_DECLARATIONS, RULE_2, $1, tree_rule( TREE_DECLARATIONS, RULE_2, $3, $5 ) ); }
 	;
 
 type
 	: standard_type
+		{ $$ = tree_rule( TREE_TYPE, RULE_1, NULL, $1 ); }
 	| ARRAY OPEN_B range CLOSE_B OF standard_type
+		{ $$ = tree_rule( TREE_TYPE, RULE_2, $3, $6 ); }
 	;
 
 range
 	: INUM DOTOP INUM
+		{ $$ = tree_rule( TREE_RANGE, RULE_1, tree_inum( $1 ), tree_inum( $3 ) ); }
 	;
 
 standard_type
 	: INTEGER
+		{ $$ = tree_rule( TREE_STANDARD_TYPE, RULE_1, NULL, tree_type( TYPE_INT ) ); }
 	| REAL
+		{ $$ = tree_rule( TREE_STANDARD_TYPE, RULE_2, NULL, tree_type( TYPE_REAL ) ); }
 	;
 
 subprogram_declarations
 	: /* empty */
+		{ $$ = tree_rule( TREE_SUBPROGRAM_DECLARATIONS, RULE_1, NULL, NULL ); }
 	| subprogram_declarations subprogram_declaration SEMICOLON
+		{ $$ = tree_rule( TREE_SUBPROGRAM_DECLARATIONS, RULE_2, $1, $2 ); }
 	;
 
 subprogram_declaration
 	: subprogram_header
-		declarations
-		subprogram_declarations
-		compound_statement
+	declarations
+	subprogram_declarations
+	compound_statement
+		{ $$ = tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $1, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $2, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $3, $4 ) ) ); }
 	;
 
 subprogram_header
 	: FUNCTION NAME arguments COLON standard_type SEMICOLON
+		{ $$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, $3, $5 ) ); }
 	| PROCEDURE NAME arguments SEMICOLON
+		{ $$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_2, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), $3); }
 	;
 
 arguments
 	: /* empty */
+		{ $$ = tree_rule( TREE_ARGUMENTS, RULE_1, NULL, NULL ); }
 	| OPEN_P parameter_list CLOSE_P
+		{ $$ = tree_rule( TREE_ARGUMENTS, RULE_2, NULL, $2 ); }
 	;
 
 parameter_list
 	: identifier_list COLON type
+		{ $$ = tree_rule( TREE_PARAMETER_LIST, RULE_1, $1, $3 ); }
 	| parameter_list SEMICOLON identifier_list COLON type
+		{ $$ = tree_rule( TREE_PARAMETER_LIST, RULE_2, $1, tree_rule( TREE_PARAMETER_LIST, RULE_2, $3, $5 ) ); }
 	;
 
 compound_statement
 	: BBEGIN optional_statements END
+		{ $$ = tree_rule( TREE_COMPOUND_STATEMENT, RULE_1, NULL, $2 ); }
 	;
 
 optional_statements
 	: /* empty */
+		{ $$ = tree_rule( TREE_OPTIONAL_STATEMENTS, RULE_1, NULL, NULL ); }
 	| statement_list
+		{ $$ = tree_rule( TREE_OPTIONAL_STATEMENTS, RULE_2, NULL, $1 ); }
 	;
 
 statement_list
 	: statement
+		{ $$ = tree_rule( TREE_STATEMENT_LIST, RULE_1, NULL, $1 ); }
 	| statement_list SEMICOLON statement
+		{ $$ = tree_rule( TREE_STATEMENT_LIST, RULE_2, $1, $3 ); }
 	;
 
 statement
 	: variable ASSOP expression
+		{ $$ = tree_rule( TREE_STATEMENT, RULE_1, $1, $3 ); }
 	| procedure_statement
+		{ $$ = tree_rule( TREE_STATEMENT, RULE_2, NULL, $1 ); }
 	| compound_statement
+		{ $$ = tree_rule( TREE_STATEMENT, RULE_3, NULL, $1 ); }
 	| IF expression THEN statement ELSE statement
+		{ $$ = tree_rule( TREE_STATEMENT, RULE_3, $2, tree_rule( TREE_STATEMENT, RULE_3, $4, $6 ) ); }
 	| IF expression THEN statement
+		{ $$ = tree_rule( TREE_STATEMENT, RULE_4, $2, $4 ); }
 	| WHILE expression DO statement
+		{ $$ = tree_rule( TREE_STATEMENT, RULE_5, $2, $4 ); }
 	| REPEAT statement UNTIL expression
+		{ $$ = tree_rule( TREE_STATEMENT, RULE_5, $2, $4 ); }
 	| FOR NAME ASSOP range DO statement
+		{ $$ = tree_rule( TREE_STATEMENT, RULE_6, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_STATEMENT, RULE_6, $4, $6 ) ) ; }
 	| FOR NAME ASSOP INUM TO INUM DO statement
+		{ $$ = tree_rule( TREE_STATEMENT, RULE_7, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $4 ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $6 ), $8 ) ) ) ; }
 	;
 
 variable
 	: NAME
+		{ $$ = tree_rule( TREE_VARIABLE, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) ); }
 	| NAME OPEN_B expression CLOSE_B
+		{ $$ = tree_rule( TREE_VARIABLE, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
 	;
 
 procedure_statement
 	: NAME
+		{ $$ = tree_rule( TREE_PROCEDURE_STATEMENT, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) ); }
 	| NAME OPEN_P expression_list CLOSE_P
+		{ $$ = tree_rule( TREE_PROCEDURE_STATEMENT, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
 	;
 
 expression_list
 	: expression
+		{ $$ = tree_rule( TREE_EXPRESSION_LIST, RULE_1, NULL, $1 ); }
 	| expression_list COMMA expression
+		{ $$ = tree_rule( TREE_EXPRESSION_LIST, RULE_2, $1, $3 ); }
 	;
 
 expression
 	: simple_expression
+		{ $$ = tree_rule( TREE_EXPRESSION, RULE_1, NULL, $1 ); }
 	| simple_expression RELOP simple_expression
+		{ $$ = tree_rule( TREE_EXPRESSION, RULE_2, NULL, tree_op( TREE_RELOP, yylval.opval, $1, $3 ) ); }
 	;
 
 simple_expression
 	: term
-		{ $$ = $1; }
+		{ $$ = tree_rule( TREE_SIMPLE_EXPRESSION, RULE_1, NULL, $1 ); }
 	| ADDOP term
-		{ $$ = tree_op( ADDOP_T, yylval.opval, $2, NULL ); }
+		{ $$ = tree_rule( TREE_SIMPLE_EXPRESSION, RULE_2, NULL, tree_op( TREE_ADDOP, yylval.opval, NULL, $2 ) ); }
 	| simple_expression ADDOP term
-		{ $$ = tree_op( ADDOP_T, yylval.opval, $1, $3 ); }
+		{ $$ = tree_rule( TREE_SIMPLE_EXPRESSION, RULE_3, NULL, tree_op( TREE_ADDOP, yylval.opval, $1, $3 ) ); }
 	;
 
 term
 	: factor
-		{ $$ = $1; }
+		{ $$ = tree_rule( TREE_TERM, RULE_1, NULL, $1 ); }
 	| term MULOP factor
-		{ $$ = tree_op( MULOP_T, yylval.opval, $1, $3 ); }
+		{ $$ = tree_rule( TREE_TERM, RULE_2, NULL, tree_op( TREE_MULOP, yylval.opval, $1, $3 ) ); }
 	;
 
 factor
 	: NAME
-		{ $$ = tree_sym( search_scope_depth( scope, $1, scope_depth ) ); }
+		{ $$ = tree_rule( TREE_FACTOR, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) ); }
 	| NAME OPEN_P expression_list CLOSE_P
-		{ $$ = tree_op( FUNCTION_T, 0, tree_sym( search_scope( scope, $1 ) ), $3 ); }
+		{ $$ = tree_rule( TREE_FACTOR, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
 	| NAME OPEN_B expression CLOSE_B
-		{ $$ = tree_op( ARRAY_T, 0, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
+		{ $$ = tree_rule( TREE_FACTOR, RULE_3, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
 	| INUM
-		{ $$ = tree_inum( $1 ); }
+		{ $$ = tree_rule( TREE_FACTOR, RULE_4, NULL, tree_inum( $1 ) ); }
 	| RNUM
-		{ $$ = tree_rnum( $1 ); }
+		{ $$ = tree_rule( TREE_FACTOR, RULE_5, NULL, tree_rnum( $1 ) ); }
 	| OPEN_P expression CLOSE_P
-		{ $$ = $2; }
+		{ $$ = tree_rule( TREE_FACTOR, RULE_6, NULL, $2 ); }
 	| NOT factor
-		{ $$ = tree_op( NOT_T, 0, $2, NULL ); }
+		{ $$ = tree_rule( TREE_FACTOR, RULE_7, NULL, $2 ); }
 	;
 
 %%

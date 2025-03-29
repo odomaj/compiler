@@ -4,64 +4,50 @@
 #include <stdint.h>
 #include "list.h"
 
-/*
-#define PROGAM 0
-#define PROCEDURE 1
-#define FUNCTION 2
-#define VAR 3
-#define ARRAY 4
-#define OF 5
-#define BBEGIN 6
-#define END 7
-#define INTEGER 8
-#define REAL 9
-#define IF 10
-#define THEN 11
-#define ELSE 12
-#define WHILE 13
-#define DO 14
-#define FOR 15
-#define TO 16
-#define RELOP 17
-#define ADDOP 18
-#define MULOP 19
-#define NOT 20
-#define ASSOP 21
-#define DOTOP 22
-#define INUM 23
-#define RNUM 24
-#define NAME 25
-#define ERR 26
-#define COMMA 27
-
-#define LT 0
-#define LE 1
-#define GT 2
-#define GE 3
-#define EQ 4
-#define NE 5
-
-#define PLUS 0
-#define MINUS 1
-#define OR 2
-
-#define STAR 0
-#define SLASH 1
-#define DIV 2
-#define MOD 3
-#define AND 4
-*/
-
 #define IVAL 0
 #define RVAL 1
 #define SVAL 2
 #define OPVAL 3
+#define RULE_VAL 4
+#define TVAL 5
 
-#define NOT_T 0
-#define ARRAY_T 1
-#define FUNCTION_T 2
-#define MULOP_T 3
-#define ADDOP_T 4
+#define TREE_PROGRAM 0
+#define TREE_IDENTIFIER_LIST 1
+#define TREE_DECLARATIONS 2
+#define TREE_TYPE 3
+#define TREE_RANGE 4
+#define TREE_STANDARD_TYPE 5
+#define TREE_SUBPROGRAM_DECLARATIONS 6
+#define TREE_SUBPROGRAM_DECLARATION 7
+#define TREE_SUBPROGRAM_HEADER 8
+#define TREE_ARGUMENTS 9
+#define TREE_PARAMETER_LIST 10
+#define TREE_COMPOUND_STATEMENT 11
+#define TREE_OPTIONAL_STATEMENTS 12
+#define TREE_STATEMENT_LIST 13
+#define TREE_STATEMENT 14
+#define TREE_VARIABLE 15
+#define TREE_PROCEDURE_STATEMENT 16
+#define TREE_EXPRESSION_LIST 17
+#define TREE_EXPRESSION 18
+#define TREE_SIMPLE_EXPRESSION 19
+#define TREE_TERM 20
+#define TREE_FACTOR 21
+
+#define RULE_1 0
+#define RULE_2 1
+#define RULE_3 2
+#define RULE_4 3
+#define RULE_5 4
+#define RULE_6 5
+#define RULE_7 6
+
+#define TYPE_INT 0
+#define TYPE_REAL 1
+
+#define TREE_RELOP 0
+#define TREE_ADDOP 1
+#define TREE_MULOP 2
 
 typedef struct
 {
@@ -69,16 +55,29 @@ typedef struct
     uint8_t value;
 } operator_t;
 
+typedef struct
+{
+    uint8_t rule;
+    uint8_t option;
+} rule_t;
+
+typedef struct
+{
+    uint8_t type;
+} type_t;
+
 typedef struct tree_s
 {
-    uint8_t label;
     uint8_t type;
+    uint8_t label;
     union
     {
         int ival;
         float rval;
         list_t *sval;
         operator_t op_val;
+        rule_t rule_val;
+        type_t tval;
     } value;
 
     struct tree_s *left;
@@ -89,5 +88,7 @@ syntax_tree_t *tree_inum(int ival);
 syntax_tree_t *tree_rnum(float rval);
 syntax_tree_t *tree_op(uint8_t type, uint8_t value, syntax_tree_t *left, syntax_tree_t *right);
 syntax_tree_t *tree_sym(list_t *sval);
+syntax_tree_t *tree_rule(uint8_t rule, uint8_t option, syntax_tree_t *left, syntax_tree_t *right);
+syntax_tree_t *tree_type(uint8_t type);
 
 #endif
