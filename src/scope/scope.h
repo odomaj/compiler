@@ -10,11 +10,14 @@ typedef list_t *table_t[TABLE_SIZE];
 typedef struct scope_s
 {
 	table_t table;
-	struct scope_s *prev;
+	struct scope_s *upper_scope;
+	struct scope_s **lower_scopes;
 } scope_t;
 
-scope_t *make_scope(void);
+scope_t *make_scope(scope_t *upper_scope);
 scope_t *free_scope(scope_t *scope);
+
+size_t count_scopes(scope_t **lower_scopes);
 
 scope_t *push_scope(scope_t *scope);
 scope_t *pop_scope(scope_t *scope);
