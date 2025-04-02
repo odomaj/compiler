@@ -6,7 +6,6 @@
 #include "parser.h"
 
 extern FILE *yyin;
-scope_t* scope;
 size_t scope_depth = 0;
 
 %}
@@ -37,7 +36,7 @@ size_t scope_depth = 0;
 	syntax_tree_t *tval;
 }
 
-%parse-param { syntax_tree_t** tree }
+%parse-param { syntax_tree_t **tree } { scope_t *scope }
 
 %token PROGRAM FUNCTION PROCEDURE
 %token VAR ARRAY OF
@@ -278,7 +277,7 @@ factor
 
 // for semantic checks YYABORT reports failure
 
-int parse(const char *file_path, syntax_tree_t** dest)
+int parse(const char *file_path, syntax_tree_t** tree_dest, scope_t **symbol_dest)
 {
 	yyin = fopen(file_path, "r");
 	if(yyin == NULL)
@@ -287,9 +286,9 @@ int parse(const char *file_path, syntax_tree_t** dest)
 		return 1;
 	}
 
-	scope = make_scope();
+	*symbol_dest = make_scope(NULL);
 
-	int out = yyparse(dest);
+	int out = yyparse(tree_dest, *symbol_dest);
 	fclose(yyin);
 
 	return out;

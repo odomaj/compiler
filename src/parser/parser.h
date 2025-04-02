@@ -7,8 +7,8 @@
 #include "tree.h"
 
 int yylex(void);
-void yyerror(syntax_tree_t **, const char *);
+void yyerror(syntax_tree_t **, scope_t *, const char *);
 
-int parse(const char *, syntax_tree_t **);
+int parse(const char *, syntax_tree_t **, scope_t **);
 
 #endif
