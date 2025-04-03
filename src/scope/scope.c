@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "scope.h"
 
@@ -71,10 +72,11 @@ size_t hash(const char *str)
 	return (size_t)(h % TABLE_SIZE);
 }
 
-inline void insert_scope(scope_t *scope, const char *name)
+inline list_t *insert_scope(scope_t *scope, const char *name)
 {
 	uint32_t i = hash(name);
 	scope->table[i] = insert_list(scope->table[i], name);
+	return scope->table[i];
 }
 
 list_t *search_scope(scope_t *scope, const char *name)
@@ -93,6 +95,7 @@ list_t *search_scope(scope_t *scope, const char *name)
 list_t *search_scope_depth(scope_t *scope, const char *name, size_t depth)
 {
 	size_t i = hash(name);
+	depth++;
 	while (scope != NULL && depth--)
 	{
 		list_t *hit = search_list(scope->table[i], name);

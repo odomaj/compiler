@@ -24,7 +24,8 @@ scope_t *pop_scope(scope_t *scope);
 
 size_t hash(const char *str);
 
-void insert_scope(scope_t *scope, const char *name);
+list_t *insert_scope(scope_t *scope, const char *name);
+
 list_t *search_scope(scope_t *scope, const char *name);
 list_t *search_scope_depth(scope_t *scope, const char *name, size_t depth);
 

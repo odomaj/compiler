@@ -105,16 +105,26 @@ program
 
 identifier_list
 	: NAME
-		{ $$ = tree_rule( TREE_IDENTIFIER_LIST, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) ); }
+		{
+			if( search_scope_depth( scope, $1, scope_depth ) != NULL)
+				YYABORT;
+			$$ = tree_rule( TREE_IDENTIFIER_LIST, RULE_1, NULL, tree_sym( insert_scope( scope, $1 ) ) );
+		}
 	| identifier_list COMMA NAME
-		{ $$ = tree_rule( TREE_IDENTIFIER_LIST, RULE_2, $1, tree_sym( search_scope_depth( scope, $3, scope_depth ) ) ); }
+		{
+			if( search_scope_depth( scope, $3, scope_depth ) != NULL)
+				YYABORT;
+			$$ = tree_rule( TREE_IDENTIFIER_LIST, RULE_2, $1, tree_sym( insert_scope( scope, $3 ) ) );
+		}
 	;
 
 declarations
 	: /* empty */
 		{ $$ = tree_rule( TREE_DECLARATIONS, RULE_1, NULL, NULL ); }
 	| declarations VAR identifier_list COLON type SEMICOLON
-		{ $$ = tree_rule( TREE_DECLARATIONS, RULE_2, $1, tree_rule( TREE_DECLARATIONS, RULE_2, $3, $5 ) ); }
+		{
+			$$ = tree_rule( TREE_DECLARATIONS, RULE_2, $1, tree_rule( TREE_DECLARATIONS, RULE_2, $3, $5 ) );
+		}
 	;
 
 type
