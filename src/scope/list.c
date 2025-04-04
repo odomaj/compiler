@@ -39,7 +39,7 @@ list_t *search_list(list_t *list, const char *name)
 {
 	while (list != NULL)
 	{
-		if (strcmp(name, list->name) == 0)
+		if (list->name != NULL && strcmp(name, list->name) == 0)
 			return list;
 		list = list->next;
 	}

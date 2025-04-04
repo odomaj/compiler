@@ -342,7 +342,7 @@ whitespace	[ \t\r\n]+
 
 %%
 
-void yyerror( syntax_tree_t** syntax_tree, scope_t * symbol_table, const char* msg )
+void yyerror( syntax_tree_t **syntax_tree, scope_t *symbol_table, const char *msg )
 {
 	fprintf( stderr, "[ERROR] %s\n", msg );
 	YY_FLUSH_BUFFER;
