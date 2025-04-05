@@ -169,9 +169,23 @@ subprogram_declaration
 
 subprogram_header
 	: FUNCTION NAME arguments COLON standard_type SEMICOLON
-		{ $$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, $3, $5 ) ); }
+		{
+			if( search_scope_depth( scope, $2, scope_depth ) != NULL)
+			{
+				yyerror(tree, scope, "variable redeclared as function");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, tree_sym( insert_scope( scope, $2 ) ), tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, $3, $5 ) );
+		}
 	| PROCEDURE NAME arguments SEMICOLON
-		{ $$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_2, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), $3); }
+		{
+			if( search_scope_depth( scope, $2, scope_depth ) != NULL)
+			{
+				yyerror(tree, scope, "variable redeclared as procedure");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_2, tree_sym( insert_scope( scope, $2 ) ), $3);
+		}
 	;
 
 arguments
