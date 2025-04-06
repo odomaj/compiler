@@ -75,20 +75,6 @@ syntax_tree_t *tree_rule(uint8_t rule, uint8_t option, syntax_tree_t *left, synt
     return tree;
 }
 
-syntax_tree_t *tree_type(uint8_t type)
-{
-    syntax_tree_t *tree = malloc(sizeof(*tree));
-    assert(tree != NULL);
-
-    tree->type = TVAL;
-    tree->value.tval.type = type;
-
-    tree->left = NULL;
-    tree->right = NULL;
-
-    return tree;
-}
-
 void free_tree(syntax_tree_t *tree)
 {
     return;

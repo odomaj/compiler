@@ -34,6 +34,10 @@ size_t scope_depth = 0;
 
 	// syntax tree value
 	syntax_tree_t *tval;
+	list_t *lval;
+	type_t ttype;
+	type_array_t atype;
+	type_standard_t stype;
 }
 
 %parse-param { syntax_tree_t **tree } { scope_t *scope }
@@ -70,11 +74,11 @@ size_t scope_depth = 0;
 
 %token ERR
 
-%type <tval> identifier_list
-%type <tval> declarations
-%type <tval> type
-%type <tval> range
-%type <tval> standard_type
+%type <lval> identifier_list
+%type <lval> declarations
+%type <ttype> type
+%type <atype> range
+%type <stype> standard_type
 %type <tval> subprogram_declarations
 %type <tval> subprogram_declaration
 %type <tval> subprogram_header
@@ -100,56 +104,64 @@ program
 	subprogram_declarations
 	compound_statement
 	DOT
-		{ *tree = tree_rule( TREE_PROGRAM, RULE_1, $4, tree_rule( TREE_PROGRAM, RULE_1, $7, tree_rule( TREE_PROGRAM, RULE_1, $8, $9 ) ) ); }
+		{
+			if ( insert_scope_l( scope, $7 ) || insert_scope_l( scope, $4 ))
+			{
+				yyerror( tree, scope, "variable redeclared" );
+				YYABORT;
+			}
+			*tree = tree_rule( TREE_PROGRAM, RULE_1, $8, $9 );
+		}
 	;
 
 identifier_list
 	: NAME
 		{
-			if( search_scope_depth( scope, $1, scope_depth ) != NULL)
-			{
-				yyerror(tree, scope, "variable redeclared");
-				YYABORT;
-			}
-			$$ = tree_rule( TREE_IDENTIFIER_LIST, RULE_1, NULL, tree_sym( insert_scope( scope, $1 ) ) );
+			$$ = new_list( $1 );
 		}
 	| identifier_list COMMA NAME
 		{
-			if( search_scope_depth( scope, $3, scope_depth ) != NULL)
-			{
-				yyerror(tree, scope, "variable redeclared");
-				YYABORT;
-			}
-			$$ = tree_rule( TREE_IDENTIFIER_LIST, RULE_2, $1, tree_sym( insert_scope( scope, $3 ) ) );
+			$$ = insert_list( $1, $3 );
 		}
 	;
 
 declarations
 	: /* empty */
-		{ $$ = tree_rule( TREE_DECLARATIONS, RULE_1, NULL, NULL ); }
+		{ $$ = NULL; }
 	| declarations VAR identifier_list COLON type SEMICOLON
 		{
-			$$ = tree_rule( TREE_DECLARATIONS, RULE_2, $1, tree_rule( TREE_DECLARATIONS, RULE_2, $3, $5 ) );
+			(void)type_list( $3, $5 );
+			$$ = $3 ;
 		}
 	;
 
 type
 	: standard_type
-		{ $$ = tree_rule( TREE_TYPE, RULE_1, NULL, $1 ); }
+		{
+			$$.type_class = TYPE_STANDARD;
+			$$.standard = $1;
+		}
 	| ARRAY OPEN_B range CLOSE_B OF standard_type
-		{ $$ = tree_rule( TREE_TYPE, RULE_2, $3, $6 ); }
+		{
+			$$.type_class = TYPE_ARRAY;
+			$$.standard = $6;
+			$$.array = $3;
+		}
 	;
 
 range
 	: INUM DOTOP INUM
-		{ $$ = tree_rule( TREE_RANGE, RULE_1, tree_inum( $1 ), tree_inum( $3 ) ); }
+		{
+			$$.start_i = $1; 
+			$$.end_i = $3;
+		}
 	;
 
 standard_type
 	: INTEGER
-		{ $$ = tree_rule( TREE_STANDARD_TYPE, RULE_1, NULL, tree_type( TYPE_INT ) ); }
+		{ $$.type = TYPE_INT; }
 	| REAL
-		{ $$ = tree_rule( TREE_STANDARD_TYPE, RULE_2, NULL, tree_type( TYPE_REAL ) ); }
+		{ $$.type = TYPE_REAL; }
 	;
 
 subprogram_declarations
@@ -164,7 +176,14 @@ subprogram_declaration
 	declarations
 	subprogram_declarations
 	compound_statement
-		{ $$ = tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $1, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $2, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $3, $4 ) ) ); }
+		{
+			if ( insert_scope_l( scope, $2 ) )
+			{
+				yyerror( tree, scope, "variable redeclared" );
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $1, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $3, $4 ) );
+		}
 	;
 
 subprogram_header

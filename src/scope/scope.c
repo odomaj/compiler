@@ -105,3 +105,17 @@ list_t *search_scope_depth(scope_t *scope, const char *name, size_t depth)
 	}
 	return NULL;
 }
+
+uint8_t insert_scope_l(scope_t *scope, list_t *list)
+{
+	while (list != NULL)
+	{
+		list_t *next = list->next;
+		size_t i = hash(list->name);
+		list_t *hit = search_list(scope->table[i], list->name);
+		if (hit != NULL)
+			return 1;
+		scope->table[i] = append_list_element(scope->table[i], list);
+		list = next;
+	}
+}

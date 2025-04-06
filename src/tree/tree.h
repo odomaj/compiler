@@ -42,9 +42,6 @@
 #define RULE_6 5
 #define RULE_7 6
 
-#define TYPE_INT 0
-#define TYPE_REAL 1
-
 #define TREE_RELOP 0
 #define TREE_ADDOP 1
 #define TREE_MULOP 2
@@ -64,7 +61,7 @@ typedef struct
 typedef struct
 {
     uint8_t type;
-} type_t;
+} tree_type_t;
 
 typedef struct tree_s
 {
@@ -77,7 +74,6 @@ typedef struct tree_s
         list_t *sval;
         operator_t op_val;
         rule_t rule_val;
-        type_t tval;
     } value;
 
     struct tree_s *left;
@@ -89,7 +85,6 @@ syntax_tree_t *tree_rnum(float rval);
 syntax_tree_t *tree_op(uint8_t type, uint8_t value, syntax_tree_t *left, syntax_tree_t *right);
 syntax_tree_t *tree_sym(list_t *sval);
 syntax_tree_t *tree_rule(uint8_t rule, uint8_t option, syntax_tree_t *left, syntax_tree_t *right);
-syntax_tree_t *tree_type(uint8_t type);
 
 void free_tree(syntax_tree_t *tree);
 

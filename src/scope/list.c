@@ -10,8 +10,7 @@ list_t *new_list(const char *name)
 	assert(list != NULL);
 
 	list->name = strdup(name);
-	list->class = 0;
-	list->type = 0;
+	list->type.type_class = TYPE_EMPTY;
 
 	list->next = NULL;
 	return list;
@@ -44,4 +43,29 @@ list_t *search_list(list_t *list, const char *name)
 		list = list->next;
 	}
 	return NULL;
+}
+
+inline list_t *append_list_element(list_t *list, list_t *element)
+{
+	element->next = list;
+	return element;
+}
+
+list_t *append_list(list_t *front, list_t *back)
+{
+	if (front == NULL)
+		return back;
+	while (front->next != NULL)
+		front = front->next;
+	front->next = back;
+	return front;
+}
+
+void type_list(list_t *list, type_t type)
+{
+	while (list != NULL)
+	{
+		list->type = type;
+		list = list->next;
+	}
 }

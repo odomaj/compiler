@@ -29,4 +29,6 @@ list_t *insert_scope(scope_t *scope, const char *name);
 list_t *search_scope(scope_t *scope, const char *name);
 list_t *search_scope_depth(scope_t *scope, const char *name, size_t depth);
 
+uint8_t insert_scope_l(scope_t *scope, list_t *list);
+
 #endif
