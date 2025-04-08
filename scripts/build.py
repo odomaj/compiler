@@ -59,7 +59,7 @@ def build_exe(tag: str, run_test: bool, debug: bool) -> None:
                 "--env",
                 f"TEST_TARGET=/build/{build_type}/compiler_test",
                 "--env",
-                "INPUT_DIR=/tests/",
+                "INPUT_DIR=/tests/semantics/",
             ]
         )
     build_command.append(tag)
@@ -82,28 +82,19 @@ if __name__ == "__main__":
     if args.image == "y":
         build_image(args.tag)
     elif args.image != "n":
-        print(
-            f"[ERROR] {args.image} not an option for --image flag, enter y"
-            " or n"
-        )
+        print(f"[ERROR] {args.image} not an option for --image flag, enter y or n")
         exit(1)
     run_tests: bool = True
     if args.run_tests == "n":
         run_tests = False
     elif args.run_tests != "y":
-        print(
-            f"[ERROR] {args.run_tests} not an option for --run_tests flag,"
-            " enter y or n"
-        )
+        print(f"[ERROR] {args.run_tests} not an option for --run_tests flag, enter y or n")
         exit(1)
     debug: bool = True
     if args.debug == "n":
         debug = False
     elif args.debug != "y":
-        print(
-            f"[ERROR] {args.debug} not an option for --debug flag,"
-            " enter y or n"
-        )
+        print(f"[ERROR] {args.debug} not an option for --debug flag, enter y or n")
         exit(1)
     if args.exe == "y":
         build_exe(args.tag, run_tests, debug)
