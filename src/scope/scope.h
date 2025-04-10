@@ -1,6 +1,8 @@
 #ifndef COMPILER_COMMON_SCOPE_SCOPE_H
 #define COMPILER_COMMON_SCOPE_SCOPE_H
 
+#include <stddef.h>
+
 #include "list.h"
 
 #define TABLE_SIZE 211

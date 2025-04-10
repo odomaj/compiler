@@ -38,6 +38,7 @@ size_t scope_depth = 0;
 	type_t ttype;
 	type_array_t atype;
 	type_standard_t stype;
+	parsed_t pval;
 }
 
 %parse-param { syntax_tree_t **tree } { scope_t *scope }
@@ -79,8 +80,8 @@ size_t scope_depth = 0;
 %type <ttype> type
 %type <atype> range
 %type <stype> standard_type
-%type <tval> subprogram_declarations
-%type <tval> subprogram_declaration
+%type <pval> subprogram_declarations
+%type <pval> subprogram_declaration
 %type <tval> subprogram_header
 %type <tval> arguments
 %type <tval> parameter_list
@@ -105,12 +106,12 @@ program
 	compound_statement
 	DOT
 		{
-			if ( insert_scope_l( scope, $7 ) || insert_scope_l( scope, $4 ))
+			if ( insert_scope_l( scope, $4 ) || insert_scope_l( scope, $7 ))
 			{
 				yyerror( tree, scope, "variable redeclared" );
 				YYABORT;
 			}
-			*tree = tree_rule( TREE_PROGRAM, RULE_1, $8, $9 );
+			*tree = tree_rule( TREE_PROGRAM, RULE_1, $8.tree, $9 );
 		}
 	;
 
@@ -131,7 +132,7 @@ declarations
 	| declarations VAR identifier_list COLON type SEMICOLON
 		{
 			(void)type_list( $3, $5 );
-			$$ = $3 ;
+			$$ = append_list( $1, $3 );
 		}
 	;
 
@@ -166,9 +167,12 @@ standard_type
 
 subprogram_declarations
 	: /* empty */
-		{ $$ = tree_rule( TREE_SUBPROGRAM_DECLARATIONS, RULE_1, NULL, NULL ); }
+		{
+			$$.tree = NULL;
+			$$.symbols = NULL;
+		}
 	| subprogram_declarations subprogram_declaration SEMICOLON
-		{ $$ = tree_rule( TREE_SUBPROGRAM_DECLARATIONS, RULE_2, $1, $2 ); }
+		{ /*$$ = tree_rule( TREE_SUBPROGRAM_DECLARATIONS, RULE_2, $1, $2 )*/; }
 	;
 
 subprogram_declaration
@@ -177,12 +181,13 @@ subprogram_declaration
 	subprogram_declarations
 	compound_statement
 		{
-			if ( insert_scope_l( scope, $2 ) )
+			scope_t *sub_scope = make_scope( NULL );
+			if ( insert_scope_l( sub_scope, $2 ) )
 			{
 				yyerror( tree, scope, "variable redeclared" );
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $1, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $3, $4 ) );
+			/*$$ = tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $1, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $3, $4 ) )*/;
 		}
 	;
 

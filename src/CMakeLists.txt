@@ -4,11 +4,13 @@ project( COMPILER C )
 
 set (CMAKE_C_STANDARD 11)
 
+add_subdirectory( parsed )
 add_subdirectory( parser )
 add_subdirectory( scope )
 add_subdirectory( tree )
 add_subdirectory( code_gen )
 
+include_directories( parsed )
 include_directories( parser )
 include_directories( scope )
 include_directories( tree )
@@ -25,14 +27,10 @@ add_executable( ${TEST_TARGET} ${TEST_SRC} )
 
 target_link_libraries( ${MAIN_TARGET} PRIVATE 
     parser
-    scope
-    tree
     code_gen
 )
 
 target_link_libraries( ${TEST_TARGET} PRIVATE 
     parser
-    scope
-    tree
     code_gen
 )

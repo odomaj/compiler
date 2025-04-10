@@ -2,6 +2,7 @@ cmake_minimum_required( VERSION 3.10 )
 
 project( PARSER C )
 
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../parsed )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../scope )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../tree )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
@@ -27,6 +28,5 @@ add_library( ${PARSER_TARGET} STATIC
 )
 
 target_link_libraries( ${PARSER_TARGET} PUBLIC
-    scope
-    tree
+    parsed
 )
