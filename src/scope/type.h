@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#define TYPE_STANDARD
-#define TYPE_ARRAY
+#define TYPE_STANDARD 0
+#define TYPE_ARRAY 1
 
 #define TYPE_EMPTY 0
 #define TYPE_INT 1

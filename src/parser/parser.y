@@ -189,12 +189,12 @@ subprogram_declaration
 subprogram_header
 	: FUNCTION NAME arguments COLON standard_type SEMICOLON
 		{
-			if( search_scope_depth( scope, $2, scope_depth ) != NULL)
+			/*if( search_scope_depth( scope, $2, scope_depth ) != NULL)
 			{
 				yyerror(tree, scope, "variable redeclared as function");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, tree_sym( insert_scope( scope, $2 ) ), tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, $3, $5 ) );
+			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, tree_sym( insert_scope( scope, $2 ) ), tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, $3, $5 ) ) */;
 		}
 	| PROCEDURE NAME arguments SEMICOLON
 		{
@@ -216,9 +216,9 @@ arguments
 
 parameter_list
 	: identifier_list COLON type
-		{ $$ = tree_rule( TREE_PARAMETER_LIST, RULE_1, $1, $3 ); }
+		{ /*$$ = tree_rule( TREE_PARAMETER_LIST, RULE_1, $1, $3 )*/; }
 	| parameter_list SEMICOLON identifier_list COLON type
-		{ $$ = tree_rule( TREE_PARAMETER_LIST, RULE_2, $1, tree_rule( TREE_PARAMETER_LIST, RULE_2, $3, $5 ) ); }
+		{ /*$$ = tree_rule( TREE_PARAMETER_LIST, RULE_2, $1, tree_rule( TREE_PARAMETER_LIST, RULE_2, $3, $5 ) )*/; }
 	;
 
 compound_statement
@@ -256,7 +256,7 @@ statement
 	| REPEAT statement UNTIL expression
 		{ $$ = tree_rule( TREE_STATEMENT, RULE_5, $2, $4 ); }
 	| FOR NAME ASSOP range DO statement
-		{ $$ = tree_rule( TREE_STATEMENT, RULE_6, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_STATEMENT, RULE_6, $4, $6 ) ) ; }
+		{ /*$$ = tree_rule( TREE_STATEMENT, RULE_6, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_STATEMENT, RULE_6, $4, $6 ) )*/ ; }
 	| FOR NAME ASSOP INUM TO INUM DO statement
 		{ $$ = tree_rule( TREE_STATEMENT, RULE_7, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $4 ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $6 ), $8 ) ) ) ; }
 	;
