@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "parsed.h"
+#include "semantics.h"
 
 int yylex(void);
 void yyerror(syntax_tree_t **, scope_t *, const char *);

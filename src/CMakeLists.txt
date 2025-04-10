@@ -4,13 +4,13 @@ project( COMPILER C )
 
 set (CMAKE_C_STANDARD 11)
 
-add_subdirectory( parsed )
+add_subdirectory( semantics )
 add_subdirectory( parser )
 add_subdirectory( scope )
 add_subdirectory( tree )
 add_subdirectory( code_gen )
 
-include_directories( parsed )
+include_directories( semantics )
 include_directories( parser )
 include_directories( scope )
 include_directories( tree )

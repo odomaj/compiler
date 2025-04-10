@@ -1,5 +1,5 @@
-#ifndef COMPILER_PROGRAM_PROGRAM_H
-#define COMPILER_PROGRAM_PROGRAM_H
+#ifndef COMPILER_SEMANTICS_SEMANTICS_H
+#define COMPILER_SEMANTICS_SEMANTICS_H
 
 #include "tree.h"
 #include "scope.h"
