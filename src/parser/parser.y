@@ -7,7 +7,6 @@
 #include <assert.h>
 extern FILE *yyin;
 size_t scope_depth = 0;
-size_t temp_depth = 0;
 
 %}
 
@@ -107,7 +106,7 @@ program
 identifier_list
 	: NAME
 		{
-			if( search_scope_depth( scope, $1, scope_depth ) != NULL)
+			if( search_scope_depth( scope, $1, 0 ) != NULL)
 			{
 				yyerror(tree, scope, "variable redeclared");
 				YYABORT;
@@ -116,7 +115,7 @@ identifier_list
 		}
 	| identifier_list COMMA NAME
 		{
-			if( search_scope_depth( scope, $3, scope_depth ) != NULL)
+			if( search_scope_depth( scope, $3, 0 ) != NULL)
 			{
 				yyerror(tree, scope, "variable redeclared");
 				YYABORT;
@@ -165,6 +164,7 @@ subprogram_declaration
 	{
 		scope = push_scope( scope );
 		assert(scope != NULL);
+		scope_depth++;
 	}
 	subprogram_header
 	declarations
@@ -173,6 +173,7 @@ subprogram_declaration
 		{
 			$$ = tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $2, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $3, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $4, $5 ) ) );
 			scope = pop_scope( scope );
+			scope_depth--;
 		}
 	;
 
@@ -246,23 +247,65 @@ statement
 	| REPEAT statement UNTIL expression
 		{ $$ = tree_rule( TREE_STATEMENT, RULE_5, $2, $4 ); }
 	| FOR NAME ASSOP range DO statement
-		{ $$ = tree_rule( TREE_STATEMENT, RULE_6, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_STATEMENT, RULE_6, $4, $6 ) ) ; }
+		{
+			if( search_scope_depth( scope, $2, scope_depth ) == NULL)
+			{
+				yyerror(tree, scope, "variable used before declared");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_STATEMENT, RULE_6, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_STATEMENT, RULE_6, $4, $6 ) );
+		}
 	| FOR NAME ASSOP INUM TO INUM DO statement
-		{ $$ = tree_rule( TREE_STATEMENT, RULE_7, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $4 ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $6 ), $8 ) ) ) ; }
+		{
+			if( search_scope_depth( scope, $2, scope_depth ) == NULL)
+			{
+				yyerror(tree, scope, "variable used before declared");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_STATEMENT, RULE_7, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $4 ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $6 ), $8 ) ) );
+		}
 	;
 
 variable
 	: NAME
-		{ $$ = tree_rule( TREE_VARIABLE, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) ); }
+		{
+			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			{
+				yyerror(tree, scope, "variable used before declared");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_VARIABLE, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) );
+		}
 	| NAME OPEN_B expression CLOSE_B
-		{ $$ = tree_rule( TREE_VARIABLE, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
+		{
+			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			{
+				yyerror(tree, scope, "variable used before declared");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_VARIABLE, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 );
+		}
 	;
 
 procedure_statement
 	: NAME
-		{ $$ = tree_rule( TREE_PROCEDURE_STATEMENT, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) ); }
+		{
+			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			{
+				yyerror(tree, scope, "variable used before declared");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_PROCEDURE_STATEMENT, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) );
+		}
 	| NAME OPEN_P expression_list CLOSE_P
-		{ $$ = tree_rule( TREE_PROCEDURE_STATEMENT, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
+		{
+			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			{
+				yyerror(tree, scope, "variable used before declared");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_PROCEDURE_STATEMENT, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 );
+		}
 	;
 
 expression_list
@@ -297,11 +340,32 @@ term
 
 factor
 	: NAME
-		{ $$ = tree_rule( TREE_FACTOR, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) ); }
+		{
+			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			{
+				yyerror(tree, scope, "variable used before declared");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_FACTOR, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) );
+		}
 	| NAME OPEN_P expression_list CLOSE_P
-		{ $$ = tree_rule( TREE_FACTOR, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
+		{
+			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			{
+				yyerror(tree, scope, "variable used before declared");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_FACTOR, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 );
+		}
 	| NAME OPEN_B expression CLOSE_B
-		{ $$ = tree_rule( TREE_FACTOR, RULE_3, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 ); }
+		{
+			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			{
+				yyerror(tree, scope, "variable used before declared");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_FACTOR, RULE_3, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 );
+		}
 	| INUM
 		{ $$ = tree_rule( TREE_FACTOR, RULE_4, NULL, tree_inum( $1 ) ); }
 	| RNUM
