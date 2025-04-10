@@ -263,21 +263,21 @@ whitespace	[ \t\r\n]+
 
 {number}		{
 				#ifndef NDEBUG
-					fprintf(stderr, "[number]");
+					fprintf(stderr, "[number:%s]", yytext);
 				#endif
 					yylval.ival = atoi( yytext );
 					return INUM;
 				}
 {floating}		{
 				#ifndef NDEBUG
-					fprintf(stderr, "[float]");
+					fprintf(stderr, "[float:%s]", yytext);
 				#endif
 					yylval.rval = atof( yytext );
 					return RNUM;
 				}
 {name}			{
 				#ifndef NDEBUG
-					fprintf(stderr, "[name]");
+					fprintf(stderr, "[name:%s]", yytext);
 				#endif
 					yylval.sval = strdup( yytext );
 					return NAME;

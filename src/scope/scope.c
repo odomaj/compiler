@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-
+#include <stdio.h>
 #include "scope.h"
 
 scope_t *make_scope(scope_t *upper_scope)
@@ -47,7 +47,7 @@ inline scope_t *push_scope(scope_t *scope)
 	// ensure no overflows
 	if (len + 2 < len)
 		return NULL;
-	scope->lower_scopes = realloc(scope->lower_scopes, len + 1);
+	scope->lower_scopes = realloc(scope->lower_scopes, (len + 1) * sizeof(*(scope->lower_scopes)));
 	assert(scope->lower_scopes != NULL);
 	scope->lower_scopes[len] = make_scope(scope);
 	return scope->lower_scopes[len];

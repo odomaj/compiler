@@ -4,9 +4,10 @@
 #include <assert.h>
 
 #include "parser.h"
-
+#include <assert.h>
 extern FILE *yyin;
 size_t scope_depth = 0;
+size_t temp_depth = 0;
 
 %}
 
@@ -160,31 +161,39 @@ subprogram_declarations
 	;
 
 subprogram_declaration
-	: subprogram_header
+	:
+	{
+		scope = push_scope( scope );
+		assert(scope != NULL);
+	}
+	subprogram_header
 	declarations
 	subprogram_declarations
 	compound_statement
-		{ $$ = tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $1, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $2, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $3, $4 ) ) ); }
+		{
+			$$ = tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $2, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $3, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $4, $5 ) ) );
+			scope = pop_scope( scope );
+		}
 	;
 
 subprogram_header
 	: FUNCTION NAME arguments COLON standard_type SEMICOLON
 		{
-			if( search_scope_depth( scope, $2, scope_depth ) != NULL)
+			if( search_scope_depth( scope->upper_scope, $2, scope_depth ) != NULL)
 			{
 				yyerror(tree, scope, "variable redeclared as function");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, tree_sym( insert_scope( scope, $2 ) ), tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, $3, $5 ) );
+			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, tree_sym( insert_scope( scope->upper_scope, $2 ) ), tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, $3, $5 ) );
 		}
 	| PROCEDURE NAME arguments SEMICOLON
 		{
-			if( search_scope_depth( scope, $2, scope_depth ) != NULL)
+			if( search_scope_depth( scope->upper_scope, $2, scope_depth ) != NULL)
 			{
 				yyerror(tree, scope, "variable redeclared as procedure");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_2, tree_sym( insert_scope( scope, $2 ) ), $3);
+			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_2, tree_sym( insert_scope( scope->upper_scope, $2 ) ), $3);
 		}
 	;
 
