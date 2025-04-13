@@ -3,13 +3,15 @@
 
 #include <stdint.h>
 
+#include "type.h"
+
 typedef struct list_s
 {
 	char *name;
 	// NAME FUNCTION PARAMETER
 	uint8_t class;
 
-	uint8_t type;
+	type_t type;
 
 	struct list_s *next;
 } list_t;

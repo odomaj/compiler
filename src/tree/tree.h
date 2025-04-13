@@ -2,7 +2,9 @@
 #define COMPILER_TREE_TREE_H
 
 #include <stdint.h>
+
 #include "list.h"
+#include "type.h"
 
 #define IVAL 0
 #define RVAL 1
@@ -42,9 +44,6 @@
 #define RULE_6 5
 #define RULE_7 6
 
-#define TYPE_INT 0
-#define TYPE_REAL 1
-
 #define TREE_RELOP 0
 #define TREE_ADDOP 1
 #define TREE_MULOP 2
@@ -61,11 +60,6 @@ typedef struct
     uint8_t option;
 } rule_t;
 
-typedef struct
-{
-    uint8_t type;
-} type_t;
-
 typedef struct tree_s
 {
     uint8_t type;
@@ -77,7 +71,7 @@ typedef struct tree_s
         list_t *sval;
         operator_t op_val;
         rule_t rule_val;
-        type_t tval;
+        type_standard_t tval;
     } value;
 
     struct tree_s *left;
@@ -92,5 +86,12 @@ syntax_tree_t *tree_rule(uint8_t rule, uint8_t option, syntax_tree_t *left, synt
 syntax_tree_t *tree_type(uint8_t type);
 
 void free_tree(syntax_tree_t *tree);
+
+type_t tree_to_type(syntax_tree_t *tree);
+type_t tree_to_stype(syntax_tree_t *tree);
+type_array_t tree_to_atype(syntax_tree_t *tree);
+
+void declare_types(syntax_tree_t *id_list, syntax_tree_t *type);
+void declare_type(syntax_tree_t *id, type_t type);
 
 #endif

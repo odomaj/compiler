@@ -4,7 +4,7 @@
 #include <assert.h>
 
 #include "parser.h"
-#include <assert.h>
+
 extern FILE *yyin;
 size_t scope_depth = 0;
 
@@ -129,6 +129,7 @@ declarations
 		{ $$ = tree_rule( TREE_DECLARATIONS, RULE_1, NULL, NULL ); }
 	| declarations VAR identifier_list COLON type SEMICOLON
 		{
+			(void)declare_types( $3, $5 );
 			$$ = tree_rule( TREE_DECLARATIONS, RULE_2, $1, tree_rule( TREE_DECLARATIONS, RULE_2, $3, $5 ) );
 		}
 	;
@@ -377,8 +378,6 @@ factor
 	;
 
 %%
-
-// for semantic checks YYABORT reports failure
 
 int parse(const char *file_path, syntax_tree_t** tree_dest, scope_t **symbol_dest)
 {

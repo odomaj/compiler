@@ -93,3 +93,76 @@ void free_tree(syntax_tree_t *tree)
 {
     return;
 }
+
+type_t tree_to_type(syntax_tree_t *tree)
+{
+    assert(tree->type == RULE_VAL);
+    assert(tree->value.rule_val.rule == TREE_STANDARD_TYPE || tree->value.rule_val.rule == TREE_TYPE);
+    switch (tree->type)
+    {
+    case TREE_STANDARD_TYPE:
+        return tree_to_stype(tree);
+    case TREE_TYPE:
+        type_t type = tree_to_stype(tree);
+        if (tree->value.rule_val.option == RULE_1)
+            return type;
+        type.type_class = TYPE_ARRAY;
+        type.array = tree_to_atype(tree->left);
+        return type;
+    }
+    // should never happen
+    type_t type;
+    return type;
+}
+
+type_t tree_to_stype(syntax_tree_t *tree)
+{
+    assert(tree != NULL);
+    assert(tree->type == RULE_VAL);
+    assert(tree->value.rule_val.rule == TREE_STANDARD_TYPE);
+    type_t type;
+    type.type_class = TYPE_STANDARD;
+    type.standard = tree->value.tval;
+    return type;
+}
+
+type_array_t tree_to_atype(syntax_tree_t *tree)
+{
+    assert(tree != NULL);
+    assert(tree->type == RULE_VAL);
+    assert(tree->value.rule_val.rule == TREE_RANGE);
+    assert(tree->value.rule_val.option == RULE_1);
+    assert(tree->left != NULL);
+    assert(tree->right != NULL);
+    assert(tree->left->type == IVAL);
+    assert(tree->right->type == IVAL);
+    type_array_t type;
+    type.start_i = tree->left->value.ival;
+    type.end_i = tree->right->value.ival;
+    return type;
+}
+
+void declare_types(syntax_tree_t *id_list, syntax_tree_t *type)
+{
+    type_t ttype = tree_to_type(type);
+    assert(id_list != NULL);
+    assert(id_list->type == RULE_VAL);
+    assert(id_list->value.rule_val.rule == TREE_IDENTIFIER_LIST);
+    while (id_list->value.rule_val.option == RULE_2)
+    {
+        (void)declare_type(id_list->right, ttype);
+        id_list = id_list->left;
+        assert(id_list != NULL);
+        assert(id_list->type == RULE_VAL);
+        assert(id_list->value.rule_val.rule == TREE_IDENTIFIER_LIST);
+    }
+    assert(id_list->value.rule_val.option == RULE_1);
+    (void)declare_type(id_list->right, ttype);
+}
+
+inline void declare_type(syntax_tree_t *id, type_t type)
+{
+    assert(id != NULL);
+    assert(id->type == SVAL);
+    id->value.sval->type = type;
+}
