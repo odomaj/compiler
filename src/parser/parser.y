@@ -320,7 +320,14 @@ expression
 	: simple_expression
 		{ $$ = tree_rule( TREE_EXPRESSION, RULE_1, NULL, $1 ); }
 	| simple_expression RELOP simple_expression
-		{ $$ = tree_rule( TREE_EXPRESSION, RULE_2, NULL, tree_op( TREE_RELOP, yylval.opval, $1, $3 ) ); }
+		{
+			if( mismatched_types( $1, $3 ) )
+			{
+				yyerror(tree, scope, "mismatched types");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_EXPRESSION, RULE_2, NULL, tree_op( TREE_RELOP, yylval.opval, $1, $3 ) );
+		}
 	;
 
 simple_expression
@@ -329,14 +336,28 @@ simple_expression
 	| ADDOP term
 		{ $$ = tree_rule( TREE_SIMPLE_EXPRESSION, RULE_2, NULL, tree_op( TREE_ADDOP, yylval.opval, NULL, $2 ) ); }
 	| simple_expression ADDOP term
-		{ $$ = tree_rule( TREE_SIMPLE_EXPRESSION, RULE_3, NULL, tree_op( TREE_ADDOP, yylval.opval, $1, $3 ) ); }
+		{
+			if( mismatched_types( $1, $3 ) )
+			{
+				yyerror(tree, scope, "mismatched types");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_SIMPLE_EXPRESSION, RULE_3, NULL, tree_op( TREE_ADDOP, yylval.opval, $1, $3 ) );
+		}
 	;
 
 term
 	: factor
 		{ $$ = tree_rule( TREE_TERM, RULE_1, NULL, $1 ); }
 	| term MULOP factor
-		{ $$ = tree_rule( TREE_TERM, RULE_2, NULL, tree_op( TREE_MULOP, yylval.opval, $1, $3 ) ); }
+		{
+			if( mismatched_types( $1, $3 ) )
+			{
+				yyerror(tree, scope, "mismatched types");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_TERM, RULE_2, NULL, tree_op( TREE_MULOP, yylval.opval, $1, $3 ) );
+		}
 	;
 
 factor

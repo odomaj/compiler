@@ -94,4 +94,13 @@ type_array_t tree_to_atype(syntax_tree_t *tree);
 void declare_types(syntax_tree_t *id_list, syntax_tree_t *type);
 void declare_type(syntax_tree_t *id, type_t type);
 
+uint8_t mismatched_types(syntax_tree_t *left, syntax_tree_t *right);
+
+type_t get_saved_type(syntax_tree_t *tree);
+
+type_t expression_type(syntax_tree_t *tree);
+type_t simple_expression_type(syntax_tree_t *tree);
+type_t term_type(syntax_tree_t *tree);
+type_t factor_type(syntax_tree_t *tree);
+
 #endif
