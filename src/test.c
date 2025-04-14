@@ -71,6 +71,10 @@ int main(int argc, char **argv)
     total_passed += test_file(file, 1, file_path, init_path_len);
     total_tests++;
 
+    file = "t3-2.p";
+    total_passed += test_file(file, 0, file_path, init_path_len);
+    total_tests++;
+
     file = "t3-3.p";
     total_passed += test_file(file, 0, file_path, init_path_len);
     total_tests++;
