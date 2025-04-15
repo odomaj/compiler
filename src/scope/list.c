@@ -11,7 +11,8 @@ list_t *new_list(const char *name)
 
 	list->name = strdup(name);
 	list->class = 0;
-	list->type.type_class = TYPE_EMPTY;
+	list->type.type_class = TYPE_STANDARD;
+	list->type.standard.type = TYPE_EMPTY;
 
 	list->next = NULL;
 	return list;

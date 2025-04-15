@@ -99,14 +99,15 @@ void free_tree(syntax_tree_t *tree)
  */
 type_t tree_to_type(syntax_tree_t *tree)
 {
+    assert(tree != NULL);
     assert(tree->type == RULE_VAL);
     assert(tree->value.rule_val.rule == TREE_STANDARD_TYPE || tree->value.rule_val.rule == TREE_TYPE);
-    switch (tree->type)
+    switch (tree->value.rule_val.rule)
     {
     case TREE_STANDARD_TYPE:
-        return tree_to_stype(tree);
+        return tree_to_stype(tree->right);
     case TREE_TYPE:
-        type_t type = tree_to_stype(tree);
+        type_t type = tree_to_type(tree->right);
         if (tree->value.rule_val.option == RULE_1)
             return type;
         type.type_class = TYPE_ARRAY;
@@ -115,14 +116,15 @@ type_t tree_to_type(syntax_tree_t *tree)
     }
     // should never happen
     type_t type;
+    type.type_class = TYPE_STANDARD;
+    type.standard.type = TYPE_EMPTY;
     return type;
 }
 
 type_t tree_to_stype(syntax_tree_t *tree)
 {
     assert(tree != NULL);
-    assert(tree->type == RULE_VAL);
-    assert(tree->value.rule_val.rule == TREE_STANDARD_TYPE);
+    assert(tree->type == TVAL);
     type_t type;
     type.type_class = TYPE_STANDARD;
     type.standard = tree->value.tval;
