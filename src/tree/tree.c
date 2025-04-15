@@ -176,17 +176,25 @@ inline void declare_type(syntax_tree_t *id, type_t type)
  * outputs if the types of the left tree and right tree are not the same
  * does not perform a check of the subtrees
  */
-uint8_t mismatched_types(syntax_tree_t *left, syntax_tree_t *right)
+inline uint8_t mismatched_types(syntax_tree_t *left, syntax_tree_t *right)
 {
-    type_t l_type = get_saved_type(left);
-    type_t r_type = get_saved_type(right);
+    return type_check(get_saved_type(left), get_saved_type(right));
+}
 
-    if (l_type.type_class != r_type.type_class)
+uint8_t check_int(syntax_tree_t *tree)
+{
+    type_t type;
+    type.type_class = TYPE_STANDARD;
+    type.standard.type = TYPE_INT;
+    return type_check(get_saved_type(tree), type);
+}
+
+uint8_t type_check(type_t a, type_t b)
+{
+    if (a.type_class != b.type_class)
         return 1;
-
-    if (l_type.standard.type != r_type.standard.type)
+    if (a.standard.type != b.standard.type)
         return 1;
-
     return 0;
 }
 

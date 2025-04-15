@@ -284,6 +284,11 @@ variable
 				yyerror(tree, scope, "variable used before declared");
 				YYABORT;
 			}
+			if( check_int( $3 ) )
+			{
+				yyerror(tree, scope, "non integer type used for indexing array");
+				YYABORT;
+			}
 			$$ = tree_rule( TREE_VARIABLE, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 );
 		}
 	;
@@ -384,6 +389,11 @@ factor
 			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
 			{
 				yyerror(tree, scope, "variable used before declared");
+				YYABORT;
+			}
+			if( check_int( $3 ) )
+			{
+				yyerror(tree, scope, "non integer type used for indexing array");
 				YYABORT;
 			}
 			$$ = tree_rule( TREE_FACTOR, RULE_3, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 );
