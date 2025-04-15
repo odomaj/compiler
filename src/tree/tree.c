@@ -181,6 +181,13 @@ inline uint8_t mismatched_types(syntax_tree_t *left, syntax_tree_t *right)
     return type_check(get_saved_type(left), get_saved_type(right));
 }
 
+inline uint8_t is_standard_type(syntax_tree_t *tree)
+{
+    type_t type = get_saved_type(tree);
+    assert(type.standard.type != TYPE_EMPTY);
+    return type.type_class == TYPE_STANDARD;
+}
+
 uint8_t check_int(syntax_tree_t *tree)
 {
     type_t type;

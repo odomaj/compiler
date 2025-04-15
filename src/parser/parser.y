@@ -240,13 +240,41 @@ statement
 	| compound_statement
 		{ $$ = tree_rule( TREE_STATEMENT, RULE_3, NULL, $1 ); }
 	| IF expression THEN statement ELSE statement
-		{ $$ = tree_rule( TREE_STATEMENT, RULE_3, $2, tree_rule( TREE_STATEMENT, RULE_3, $4, $6 ) ); }
+		{
+			if( !is_standard_type( $2 ) )
+			{
+				yyerror( tree, scope, "test expression not a standard type" );
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_STATEMENT, RULE_3, $2, tree_rule( TREE_STATEMENT, RULE_3, $4, $6 ) );
+		}
 	| IF expression THEN statement
-		{ $$ = tree_rule( TREE_STATEMENT, RULE_4, $2, $4 ); }
+		{
+			if( !is_standard_type( $2 ) )
+			{
+				yyerror( tree, scope, "test expression not a standard type" );
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_STATEMENT, RULE_4, $2, $4 );
+		}
 	| WHILE expression DO statement
-		{ $$ = tree_rule( TREE_STATEMENT, RULE_5, $2, $4 ); }
+		{
+			if( !is_standard_type( $2 ) )
+			{
+				yyerror( tree, scope, "test expression not a standard type" );
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_STATEMENT, RULE_5, $2, $4 );
+		}
 	| REPEAT statement UNTIL expression
-		{ $$ = tree_rule( TREE_STATEMENT, RULE_5, $2, $4 ); }
+		{
+			if( !is_standard_type( $4 ) )
+			{
+				yyerror( tree, scope, "test expression not a standard type" );
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_STATEMENT, RULE_5, $2, $4 );
+		}
 	| FOR NAME ASSOP range DO statement
 		{
 			if( search_scope_depth( scope, $2, scope_depth ) == NULL)
@@ -258,7 +286,7 @@ statement
 		}
 	| FOR NAME ASSOP INUM TO INUM DO statement
 		{
-			if( search_scope_depth( scope, $2, scope_depth ) == NULL)
+			if( search_scope_depth( scope, $2, scope_depth ) == NULL )
 			{
 				yyerror(tree, scope, "variable used before declared");
 				YYABORT;

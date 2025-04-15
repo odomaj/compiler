@@ -96,6 +96,7 @@ void declare_type(syntax_tree_t *id, type_t type);
 
 uint8_t mismatched_types(syntax_tree_t *left, syntax_tree_t *right);
 uint8_t check_int(syntax_tree_t *tree);
+uint8_t is_standard_type(syntax_tree_t *tree);
 uint8_t type_check(type_t a, type_t b);
 
 type_t get_saved_type(syntax_tree_t *tree);
