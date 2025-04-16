@@ -312,3 +312,8 @@ type_t factor_type(syntax_tree_t *tree)
     // this should never happen
     assert(1);
 }
+
+inline uint8_t symbol_is_int(list_t *symbol)
+{
+    return symbol->type.type_class == TYPE_STANDARD && symbol->type.standard.type == TYPE_INT;
+}

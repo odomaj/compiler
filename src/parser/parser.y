@@ -277,21 +277,33 @@ statement
 		}
 	| FOR NAME ASSOP range DO statement
 		{
-			if( search_scope_depth( scope, $2, scope_depth ) == NULL)
+			list_t *symbol = search_scope_depth( scope, $2, scope_depth );
+			if( symbol == NULL )
 			{
 				yyerror(tree, scope, "variable used before declared");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_STATEMENT, RULE_6, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_STATEMENT, RULE_6, $4, $6 ) );
+			if( !symbol_is_int( symbol ) )
+			{
+				yyerror(tree, scope, "non integer type used in for loop");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_STATEMENT, RULE_6, tree_sym( symbol ), tree_rule( TREE_STATEMENT, RULE_6, $4, $6 ) );
 		}
 	| FOR NAME ASSOP INUM TO INUM DO statement
 		{
-			if( search_scope_depth( scope, $2, scope_depth ) == NULL )
+			list_t *symbol = search_scope_depth( scope, $2, scope_depth );
+			if( symbol == NULL )
 			{
 				yyerror(tree, scope, "variable used before declared");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_STATEMENT, RULE_7, tree_sym( search_scope_depth( scope, $2, scope_depth ) ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $4 ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $6 ), $8 ) ) );
+			if( !symbol_is_int( symbol ) )
+			{
+				yyerror(tree, scope, "non integer type used in for loop");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_STATEMENT, RULE_7, tree_sym( symbol ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $4 ), tree_rule( TREE_STATEMENT, RULE_7, tree_inum( $6 ), $8 ) ) );
 		}
 	;
 
