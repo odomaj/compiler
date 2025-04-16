@@ -250,9 +250,13 @@ type_t simple_expression_type(syntax_tree_t *tree)
     switch (tree->value.rule_val.option)
     {
     case RULE_1:
+        return term_type(tree->right);
     case RULE_2:
     case RULE_3:
-        return term_type(tree->right);
+        assert(tree->right != NULL);
+        assert(tree->right->type == OPVAL);
+        assert(tree->right->value.op_val.class == TREE_ADDOP);
+        return term_type(tree->right->right);
     }
     // this should never happen
     assert(1);
