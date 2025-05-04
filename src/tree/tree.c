@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include <stdio.h>
+
 #include "tree.h"
 
 syntax_tree_t *tree_inum(int ival)
@@ -170,6 +172,19 @@ inline void declare_type(syntax_tree_t *id, type_t type)
     assert(id != NULL);
     assert(id->type == SVAL);
     id->value.sval->type = type;
+}
+
+void declare_arg_types(syntax_tree_t *param_list, syntax_tree_t *s_type)
+{
+    // type_t ttype = tree_to_type(s_type);
+    assert(param_list != NULL);
+    assert(param_list->type == RULE_VAL);
+    assert(param_list->value.rule_val.rule == TREE_ARGUMENTS);
+    if (param_list->value.rule_val.option == RULE_2)
+        (void)declare_types(param_list->right, s_type);
+    // while (param_list->value.rule_val.option == RULE_2)
+    //{
+    // }
 }
 
 /**

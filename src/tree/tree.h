@@ -95,6 +95,8 @@ type_array_t tree_to_atype(syntax_tree_t *tree);
 void declare_types(syntax_tree_t *id_list, syntax_tree_t *type);
 void declare_type(syntax_tree_t *id, type_t type);
 
+void declare_arg_types(syntax_tree_t *param_list, syntax_tree_t *s_type);
+
 uint8_t mismatched_types(syntax_tree_t *left, syntax_tree_t *right);
 uint8_t symbol_is_int(list_t *symbol);
 uint8_t check_int(syntax_tree_t *tree);

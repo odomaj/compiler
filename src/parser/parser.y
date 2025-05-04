@@ -213,9 +213,15 @@ arguments
 
 parameter_list
 	: identifier_list COLON type
-		{ $$ = tree_rule( TREE_PARAMETER_LIST, RULE_1, $1, $3 ); }
+		{
+			(void)declare_types( $1, $3 );
+			$$ = tree_rule( TREE_PARAMETER_LIST, RULE_1, $1, $3 );
+		}
 	| parameter_list SEMICOLON identifier_list COLON type
-		{ $$ = tree_rule( TREE_PARAMETER_LIST, RULE_2, $1, tree_rule( TREE_PARAMETER_LIST, RULE_2, $3, $5 ) ); }
+		{
+			(void)declare_types( $3, $5 );
+			$$ = tree_rule( TREE_PARAMETER_LIST, RULE_2, $1, tree_rule( TREE_PARAMETER_LIST, RULE_2, $3, $5 ) );
+		}
 	;
 
 compound_statement
