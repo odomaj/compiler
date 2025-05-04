@@ -174,19 +174,6 @@ inline void declare_type(syntax_tree_t *id, type_t type)
     id->value.sval->type = type;
 }
 
-void declare_arg_types(syntax_tree_t *param_list, syntax_tree_t *s_type)
-{
-    // type_t ttype = tree_to_type(s_type);
-    assert(param_list != NULL);
-    assert(param_list->type == RULE_VAL);
-    assert(param_list->value.rule_val.rule == TREE_ARGUMENTS);
-    if (param_list->value.rule_val.option == RULE_2)
-        (void)declare_types(param_list->right, s_type);
-    // while (param_list->value.rule_val.option == RULE_2)
-    //{
-    // }
-}
-
 /**
  * outputs if the types of the left tree and right tree are not the same
  * does not perform a check of the subtrees
