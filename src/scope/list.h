@@ -5,6 +5,10 @@
 
 #include "type.h"
 
+#define CLASS_NAME 0
+#define CLASS_FUNCTION 1
+#define CLASS_PROCEDURE 2
+
 typedef struct list_s
 {
 	char *name;
@@ -16,10 +20,10 @@ typedef struct list_s
 	struct list_s *next;
 } list_t;
 
-list_t *new_list(const char *name);
+list_t *new_list(const char *nam, uint8_t class);
 void free_list(list_t *list);
 
-list_t *insert_list(list_t *list, const char *name);
+list_t *insert_list(list_t *list, const char *name, uint8_t class);
 
 list_t *search_list(list_t *list, const char *name);
 

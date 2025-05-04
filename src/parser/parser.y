@@ -172,6 +172,11 @@ subprogram_declaration
 	subprogram_declarations
 	compound_statement
 		{
+			if( check_subprogram( $2, scope ) )
+			{
+				yyerror(tree, scope, "function missing return or statement has return");
+				YYABORT;
+			}
 			$$ = tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $2, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $3, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $4, $5 ) ) );
 			scope = pop_scope( scope );
 			scope_depth--;
@@ -186,7 +191,7 @@ subprogram_header
 				yyerror(tree, scope, "variable redeclared as function");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, tree_sym( insert_scope( scope->upper_scope, $2 ) ), tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, $3, $5 ) );
+			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, tree_sym( insert_scope_fun( scope->upper_scope, $2, CLASS_FUNCTION ) ), tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, $3, $5 ) );
 		}
 	| PROCEDURE NAME arguments SEMICOLON
 		{
@@ -195,7 +200,7 @@ subprogram_header
 				yyerror(tree, scope, "variable redeclared as procedure");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_2, tree_sym( insert_scope( scope->upper_scope, $2 ) ), $3);
+			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_2, tree_sym( insert_scope_fun( scope->upper_scope, $2, CLASS_PROCEDURE ) ), $3);
 		}
 	;
 
@@ -234,7 +239,10 @@ statement_list
 
 statement
 	: variable ASSOP expression
-		{ $$ = tree_rule( TREE_STATEMENT, RULE_1, $1, $3 ); }
+		{
+			(void)try_update_return( interpret_var( $1 ), $3 );
+			$$ = tree_rule( TREE_STATEMENT, RULE_1, $1, $3 );
+		}
 	| procedure_statement
 		{ $$ = tree_rule( TREE_STATEMENT, RULE_2, NULL, $1 ); }
 	| compound_statement

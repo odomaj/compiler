@@ -317,3 +317,52 @@ inline uint8_t symbol_is_int(list_t *symbol)
 {
     return symbol->type.type_class == TYPE_STANDARD && symbol->type.standard.type == TYPE_INT;
 }
+
+uint8_t check_subprogram(syntax_tree_t *tree, scope_t *scope)
+{
+    assert(tree != NULL);
+    assert(tree->type == RULE_VAL);
+    assert(tree->value.rule_val.rule == TREE_SUBPROGRAM_HEADER);
+    assert(tree->left != NULL);
+    assert(tree->left->type == SVAL);
+    list_t *subprogram = tree->left->value.sval;
+    switch (tree->value.rule_val.option)
+    {
+    case RULE_1:
+        assert(subprogram->class == CLASS_FUNCTION);
+        return subprogram->type.type_class != TYPE_STANDARD || subprogram->type.standard.type == TYPE_EMPTY;
+    case RULE_2:
+        assert(subprogram->class == CLASS_PROCEDURE);
+        return subprogram->type.type_class != TYPE_STANDARD || subprogram->type.standard.type != TYPE_EMPTY;
+    }
+    assert(1);
+}
+
+list_t *interpret_var(syntax_tree_t *tree)
+{
+    assert(tree != NULL);
+    assert(tree->type == RULE_VAL);
+    assert(tree->value.rule_val.rule == TREE_VARIABLE);
+    switch (tree->value.rule_val.option)
+    {
+    case RULE_1:
+        return get_sym(tree->right);
+    case RULE_2:
+        return get_sym(tree->left);
+    }
+    assert(1);
+}
+
+inline list_t *get_sym(syntax_tree_t *tree)
+{
+    assert(tree != NULL);
+    assert(tree->type == SVAL);
+    return tree->value.sval;
+}
+
+void try_update_return(list_t *list, syntax_tree_t *tree)
+{
+    if (list->class != CLASS_FUNCTION && list->class != CLASS_PROCEDURE)
+        return;
+    list->type = expression_type(tree);
+}

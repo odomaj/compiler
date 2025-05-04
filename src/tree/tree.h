@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "list.h"
+#include "scope.h"
 #include "type.h"
 
 #define IVAL 0
@@ -106,5 +107,12 @@ type_t expression_type(syntax_tree_t *tree);
 type_t simple_expression_type(syntax_tree_t *tree);
 type_t term_type(syntax_tree_t *tree);
 type_t factor_type(syntax_tree_t *tree);
+
+uint8_t check_subprogram(syntax_tree_t *tree, scope_t *scope);
+
+list_t *interpret_var(syntax_tree_t *tree);
+list_t *get_sym(syntax_tree_t *tree);
+
+void try_update_return(list_t *list, syntax_tree_t *tree);
 
 #endif

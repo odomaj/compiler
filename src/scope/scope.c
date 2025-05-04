@@ -75,7 +75,14 @@ size_t hash(const char *str)
 inline list_t *insert_scope(scope_t *scope, const char *name)
 {
 	uint32_t i = hash(name);
-	scope->table[i] = insert_list(scope->table[i], name);
+	scope->table[i] = insert_list(scope->table[i], name, CLASS_NAME);
+	return scope->table[i];
+}
+
+inline list_t *insert_scope_fun(scope_t *scope, const char *name, uint8_t class)
+{
+	uint32_t i = hash(name);
+	scope->table[i] = insert_list(scope->table[i], name, class);
 	return scope->table[i];
 }
 

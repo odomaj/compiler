@@ -4,13 +4,13 @@
 
 #include "list.h"
 
-list_t *new_list(const char *name)
+list_t *new_list(const char *name, uint8_t class)
 {
 	list_t *list = malloc(sizeof(*list));
 	assert(list != NULL);
 
 	list->name = strdup(name);
-	list->class = 0;
+	list->class = class;
 	list->type.type_class = TYPE_STANDARD;
 	list->type.standard.type = TYPE_EMPTY;
 
@@ -29,9 +29,9 @@ void free_list(list_t *list)
 	}
 }
 
-inline list_t *insert_list(list_t *list, const char *name)
+inline list_t *insert_list(list_t *list, const char *name, uint8_t class)
 {
-	list_t *new_entry = new_list(name);
+	list_t *new_entry = new_list(name, class);
 	new_entry->next = list;
 	return new_entry;
 }
