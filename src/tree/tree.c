@@ -332,10 +332,10 @@ uint8_t check_subprogram(syntax_tree_t *tree, scope_t *scope)
     {
     case RULE_1:
         assert(subprogram->class == CLASS_FUNCTION);
-        return subprogram->type.type_class != TYPE_STANDARD || subprogram->type.standard.type == TYPE_EMPTY;
+        return subprogram->function_has_return != 1;
     case RULE_2:
         assert(subprogram->class == CLASS_PROCEDURE);
-        return subprogram->type.type_class != TYPE_STANDARD || subprogram->type.standard.type != TYPE_EMPTY;
+        return subprogram->function_has_return != 0;
     }
     assert(1);
 }
@@ -362,9 +362,20 @@ inline list_t *get_sym(syntax_tree_t *tree)
     return tree->value.sval;
 }
 
-void try_update_return(list_t *list, syntax_tree_t *tree)
+inline void type_func(list_t *list, syntax_tree_t *tree)
+{
+    assert(list->class == CLASS_FUNCTION);
+    list->type = tree_to_type(tree);
+}
+
+uint8_t try_update_return(list_t *list, syntax_tree_t *tree)
 {
     if (list->class != CLASS_FUNCTION && list->class != CLASS_PROCEDURE)
-        return;
-    list->type = expression_type(tree);
+        return 0;
+    list->function_has_return = 1;
+    // return no error here to provide more clear error message in later catch
+    if (list->class == CLASS_PROCEDURE)
+        return 0;
+    type_t type = expression_type(tree);
+    return type.type_class != TYPE_STANDARD || type.standard.type != list->type.standard.type;
 }

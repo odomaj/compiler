@@ -13,6 +13,7 @@ list_t *new_list(const char *name, uint8_t class)
 	list->class = class;
 	list->type.type_class = TYPE_STANDARD;
 	list->type.standard.type = TYPE_EMPTY;
+	list->function_has_return = 0;
 
 	list->next = NULL;
 	return list;

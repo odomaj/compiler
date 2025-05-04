@@ -15,6 +15,8 @@ typedef struct list_s
 	// NAME FUNCTION PARAMETER
 	uint8_t class;
 
+	uint8_t function_has_return;
+
 	type_t type;
 
 	struct list_s *next;

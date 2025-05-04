@@ -113,6 +113,7 @@ uint8_t check_subprogram(syntax_tree_t *tree, scope_t *scope);
 list_t *interpret_var(syntax_tree_t *tree);
 list_t *get_sym(syntax_tree_t *tree);
 
-void try_update_return(list_t *list, syntax_tree_t *tree);
+void type_func(list_t *list, syntax_tree_t *tree);
+uint8_t try_update_return(list_t *list, syntax_tree_t *tree);
 
 #endif
