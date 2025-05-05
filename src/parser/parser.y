@@ -193,6 +193,7 @@ subprogram_header
 			}
 			list_t *func_sym = insert_scope_fun( scope->upper_scope, $2, CLASS_FUNCTION );
 			(void)type_func( func_sym, $5 );
+			(void)func_params( func_sym, $3 );
 			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, tree_sym( func_sym ), tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, $3, $5 ) );
 		}
 	| PROCEDURE NAME arguments SEMICOLON
@@ -202,7 +203,9 @@ subprogram_header
 				yyerror(tree, scope, "variable redeclared as procedure");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_2, tree_sym( insert_scope_fun( scope->upper_scope, $2, CLASS_PROCEDURE ) ), $3);
+			list_t *proc_sym = insert_scope_fun( scope->upper_scope, $2, CLASS_PROCEDURE );
+			(void)func_params( proc_sym, $3 );
+			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_2, tree_sym( proc_sym ), $3);
 		}
 	;
 

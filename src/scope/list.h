@@ -19,8 +19,12 @@ typedef struct list_s
 
 	type_t type;
 
+	struct list_s *function_args;
+
 	struct list_s *next;
 } list_t;
+
+// funcs for scoping
 
 list_t *new_list(const char *nam, uint8_t class);
 void free_list(list_t *list);
@@ -28,5 +32,9 @@ void free_list(list_t *list);
 list_t *insert_list(list_t *list, const char *name, uint8_t class);
 
 list_t *search_list(list_t *list, const char *name);
+
+// funcs for parameters
+
+list_t *append_list(list_t *front, list_t *back);
 
 #endif

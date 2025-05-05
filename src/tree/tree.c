@@ -368,6 +368,71 @@ inline void type_func(list_t *list, syntax_tree_t *tree)
     list->type = tree_to_type(tree);
 }
 
+void func_params(list_t *func, syntax_tree_t *args)
+{
+    assert(func != NULL);
+    assert(func->class == CLASS_FUNCTION || func->class == CLASS_PROCEDURE);
+    assert(args != NULL);
+    assert(args->type == RULE_VAL);
+    assert(args->value.rule_val.rule == TREE_ARGUMENTS);
+    switch (args->value.rule_val.option)
+    {
+    case RULE_1:
+        return;
+    case RULE_2:
+        func->function_args = params_to_list(args->right);
+        return;
+    }
+    // should never happen
+    assert(1);
+}
+
+list_t *params_to_list(syntax_tree_t *params)
+{
+    list_t *list = NULL;
+    while (params != NULL)
+    {
+        assert(params->type == RULE_VAL);
+        assert(params->value.rule_val.rule == TREE_PARAMETER_LIST);
+        switch (params->value.rule_val.option)
+        {
+        case RULE_1:
+            return append_list(list, ids_to_list(params->left));
+        case RULE_2:
+            assert(params->right != NULL);
+            assert(params->right->type == RULE_VAL);
+            assert(params->right->value.rule_val.rule == TREE_PARAMETER_LIST);
+            assert(params->right->value.rule_val.option == RULE_2);
+            list = append_list(list, ids_to_list(params->right->left));
+            params = params->left;
+            break;
+        }
+    }
+    // should never happen
+    assert(1);
+}
+
+list_t *ids_to_list(syntax_tree_t *ids)
+{
+    list_t *list = NULL;
+    while (ids != NULL)
+    {
+        assert(ids->type == RULE_VAL);
+        assert(ids->value.rule_val.rule == TREE_IDENTIFIER_LIST);
+        switch (ids->value.rule_val.option)
+        {
+        case RULE_1:
+            return append_list(list, get_sym(ids->right));
+        case RULE_2:
+            list = append_list(list, get_sym(ids->right));
+            ids = ids->left;
+            break;
+        }
+    }
+    // should never happen
+    assert(1);
+}
+
 uint8_t statement_mismatched_types(list_t *list, syntax_tree_t *tree)
 {
     assert(list != NULL);

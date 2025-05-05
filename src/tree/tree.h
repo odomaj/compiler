@@ -113,7 +113,10 @@ uint8_t check_subprogram(syntax_tree_t *tree, scope_t *scope);
 list_t *interpret_var(syntax_tree_t *tree);
 list_t *get_sym(syntax_tree_t *tree);
 
-void type_func(list_t *list, syntax_tree_t *tree);
+void type_func(list_t *func, syntax_tree_t *tree);
+void func_params(list_t *func, syntax_tree_t *args);
+list_t *params_to_list(syntax_tree_t *params);
+list_t *ids_to_list(syntax_tree_t *ids);
 
 uint8_t statement_mismatched_types(list_t *list, syntax_tree_t *tree);
 

@@ -14,6 +14,7 @@ list_t *new_list(const char *name, uint8_t class)
 	list->type.type_class = TYPE_STANDARD;
 	list->type.standard.type = TYPE_EMPTY;
 	list->function_has_return = 0;
+	list->function_args = NULL;
 
 	list->next = NULL;
 	return list;
@@ -23,6 +24,7 @@ void free_list(list_t *list)
 {
 	while (list != NULL)
 	{
+		(void)free_list(list->function_args);
 		list_t *next = list->next;
 		(void)free(list->name);
 		(void)free(list);
@@ -46,4 +48,15 @@ list_t *search_list(list_t *list, const char *name)
 		list = list->next;
 	}
 	return NULL;
+}
+
+list_t *append_list(list_t *front, list_t *back)
+{
+	if (front == NULL)
+		return back;
+	list_t *first = front;
+	while (front->next != NULL)
+		front = front->next;
+	front->next = back;
+	return first;
 }
