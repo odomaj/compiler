@@ -368,14 +368,13 @@ inline void type_func(list_t *list, syntax_tree_t *tree)
     list->type = tree_to_type(tree);
 }
 
-uint8_t try_update_return(list_t *list, syntax_tree_t *tree)
+uint8_t statement_mismatched_types(list_t *list, syntax_tree_t *tree)
 {
-    if (list->class != CLASS_FUNCTION && list->class != CLASS_PROCEDURE)
-        return 0;
-    list->function_has_return = 1;
+    assert(list != NULL);
+    if (list->class == CLASS_PROCEDURE || list->class == CLASS_FUNCTION)
+        list->function_has_return = 1;
     // return no error here to provide more clear error message in later catch
     if (list->class == CLASS_PROCEDURE)
         return 0;
-    type_t type = expression_type(tree);
-    return type.type_class != TYPE_STANDARD || type.standard.type != list->type.standard.type;
+    return type_check(list->type, expression_type(tree));
 }

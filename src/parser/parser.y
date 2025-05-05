@@ -248,9 +248,9 @@ statement_list
 statement
 	: variable ASSOP expression
 		{
-			if( try_update_return( interpret_var( $1 ), $3 ) )
+			if( statement_mismatched_types( interpret_var( $1 ), $3 ) )
 			{
-				yyerror( tree, scope, "function returning incorrect type" );
+				yyerror( tree, scope, "mismatched types in statement" );
 				YYABORT;
 			}
 			$$ = tree_rule( TREE_STATEMENT, RULE_1, $1, $3 );
