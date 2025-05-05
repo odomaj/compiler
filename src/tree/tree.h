@@ -120,4 +120,6 @@ list_t *ids_to_list(syntax_tree_t *ids);
 
 uint8_t statement_mismatched_types(list_t *list, syntax_tree_t *tree);
 
+uint8_t func_param_mismatch(list_t *func, syntax_tree_t *expressions);
+
 #endif

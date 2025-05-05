@@ -443,3 +443,29 @@ uint8_t statement_mismatched_types(list_t *list, syntax_tree_t *tree)
         return 0;
     return type_check(list->type, expression_type(tree));
 }
+
+uint8_t func_param_mismatch(list_t *func, syntax_tree_t *expressions)
+{
+    assert(func != NULL);
+    func = func->function_args;
+    while (func->next != NULL)
+    {
+        assert(expressions != NULL);
+        assert(expressions->type == RULE_VAL);
+        assert(expressions->value.rule_val.rule == TREE_EXPRESSION_LIST);
+        if (expressions->value.rule_val.option != RULE_2)
+            return 1;
+        if (type_check(func->type, expression_type(expressions->right)))
+            return 1;
+        expressions = expressions->left;
+        func = func->next;
+    }
+    assert(expressions != NULL);
+    assert(expressions->type == RULE_VAL);
+    assert(expressions->value.rule_val.rule == TREE_EXPRESSION_LIST);
+    if (expressions->value.rule_val.option != RULE_1)
+        return 1;
+    if (type_check(func->type, expression_type(expressions->right)))
+        return 1;
+    return 0;
+}

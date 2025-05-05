@@ -368,12 +368,18 @@ procedure_statement
 		}
 	| NAME OPEN_P expression_list CLOSE_P
 		{
-			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			list_t *func = search_scope_depth( scope, $1, scope_depth );
+			if( func == NULL)
 			{
 				yyerror(tree, scope, "variable used before declared");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_PROCEDURE_STATEMENT, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 );
+			if( func_param_mismatch( func, $3 ) )
+			{
+				yyerror(tree, scope, "mismatched parameters during function or procedure call");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_PROCEDURE_STATEMENT, RULE_2, tree_sym( func ), $3 );
 		}
 	;
 
@@ -440,12 +446,18 @@ factor
 		}
 	| NAME OPEN_P expression_list CLOSE_P
 		{
-			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			list_t *func = search_scope_depth( scope, $1, scope_depth );
+			if( func == NULL)
 			{
 				yyerror(tree, scope, "variable used before declared");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_FACTOR, RULE_2, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 );
+			if( func_param_mismatch( func, $3 ) )
+			{
+				yyerror(tree, scope, "mismatched parameters during function or procedure call");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_FACTOR, RULE_2, tree_sym( func ), $3 );
 		}
 	| NAME OPEN_B expression CLOSE_B
 		{
