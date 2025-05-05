@@ -8,11 +8,13 @@ add_subdirectory( parser )
 add_subdirectory( scope )
 add_subdirectory( tree )
 add_subdirectory( code_gen )
+add_subdirectory( common )
 
 include_directories( parser )
 include_directories( scope )
 include_directories( tree )
 include_directories( code_gen )
+include_directories( common )
 
 set( MAIN_SRC main.c )
 set( MAIN_TARGET compiler )

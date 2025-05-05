@@ -320,7 +320,7 @@ inline uint8_t symbol_is_int(list_t *symbol)
     return symbol->type.type_class == TYPE_STANDARD && symbol->type.standard.type == TYPE_INT;
 }
 
-uint8_t check_subprogram(syntax_tree_t *tree, scope_t *scope)
+uint8_t check_subprogram(syntax_tree_t *tree)
 {
     assert(tree != NULL);
     assert(tree->type == RULE_VAL);
@@ -468,4 +468,12 @@ uint8_t func_param_mismatch(list_t *func, syntax_tree_t *expressions)
     if (type_check(func->type, expression_type(expressions->right)))
         return 1;
     return 0;
+}
+
+uint8_t subprogram_is_func(syntax_tree_t *sub_head)
+{
+    assert(sub_head != NULL);
+    assert(sub_head->type == RULE_VAL);
+    assert(sub_head->value.rule_val.rule == TREE_SUBPROGRAM_HEADER);
+    return sub_head->value.rule_val.option == RULE_1;
 }

@@ -4,6 +4,7 @@ project( PARSER C )
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../scope )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../tree )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../common )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
 find_package( FLEX REQUIRED )
@@ -29,4 +30,5 @@ add_library( ${PARSER_TARGET} STATIC
 target_link_libraries( ${PARSER_TARGET} PUBLIC
     scope
     tree
+    common
 )

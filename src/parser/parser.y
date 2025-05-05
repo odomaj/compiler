@@ -2,11 +2,15 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "parser.h"
 
 extern FILE *yyin;
-size_t scope_depth = 0;
+
+char *curr_func;
+size_t scope_depth;
+stack_t *scope_depths;
 
 %}
 
@@ -172,33 +176,43 @@ subprogram_declaration
 	subprogram_declarations
 	compound_statement
 		{
-			if( check_subprogram( $2, scope ) )
+			if( check_subprogram( $2 ) )
 			{
 				yyerror(tree, scope, "function missing return or statement has return");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $2, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $3, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $4, $5 ) ) );
+			if( subprogram_is_func( $2 ) )
+			{
+				scope_depths = pop_num( scope_depths );
+				assert(scope_depths != NULL);
+				scope_depth = scope_depths->num;
+			}
+			fprintf(stderr, "\n  scope_depth: %lu\n", scope_depth);
 			scope = pop_scope( scope );
 			scope_depth--;
+			$$ = tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $2, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $3, tree_rule( TREE_SUBPROGRAM_DECLARATION, RULE_1, $4, $5 ) ) );
 		}
 	;
 
 subprogram_header
 	: FUNCTION NAME arguments COLON standard_type SEMICOLON
 		{
-			if( search_scope_depth( scope->upper_scope, $2, scope_depth ) != NULL)
+			if( search_scope( scope->upper_scope, $2 ) != NULL)
 			{
 				yyerror(tree, scope, "variable redeclared as function");
 				YYABORT;
 			}
+			scope_depths = push_num( scope_depths, scope_depth );
+			scope_depth = 0;
 			list_t *func_sym = insert_scope_fun( scope->upper_scope, $2, CLASS_FUNCTION );
+			curr_func = func_sym->name;
 			(void)type_func( func_sym, $5 );
 			(void)func_params( func_sym, $3 );
 			$$ = tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, tree_sym( func_sym ), tree_rule( TREE_SUBPROGRAM_HEADER, RULE_1, $3, $5 ) );
 		}
 	| PROCEDURE NAME arguments SEMICOLON
 		{
-			if( search_scope_depth( scope->upper_scope, $2, scope_depth ) != NULL)
+			if( search_scope( scope->upper_scope, $2 ) != NULL)
 			{
 				yyerror(tree, scope, "variable redeclared as procedure");
 				YYABORT;
@@ -333,12 +347,18 @@ statement
 variable
 	: NAME
 		{
-			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			list_t *list = search_scope_depth( scope, $1, scope_depth+1 );
+			if( list == NULL )
 			{
 				yyerror(tree, scope, "variable used before declared");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_VARIABLE, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) );
+			if( search_scope_depth( scope, $1, scope_depth ) == NULL && strcmp( $1, curr_func ) )
+			{
+				yyerror(tree, scope, "variable used before declared");
+				YYABORT;
+			}
+			$$ = tree_rule( TREE_VARIABLE, RULE_1, NULL, tree_sym( list ) );
 		}
 	| NAME OPEN_B expression CLOSE_B
 		{
@@ -359,16 +379,17 @@ variable
 procedure_statement
 	: NAME
 		{
-			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			list_t *list = search_scope( scope, $1 );
+			if( list == NULL)
 			{
 				yyerror(tree, scope, "variable used before declared");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_PROCEDURE_STATEMENT, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) );
+			$$ = tree_rule( TREE_PROCEDURE_STATEMENT, RULE_1, NULL, tree_sym( list ) );
 		}
 	| NAME OPEN_P expression_list CLOSE_P
 		{
-			list_t *func = search_scope_depth( scope, $1, scope_depth );
+			list_t *func = search_scope( scope, $1 );
 			if( func == NULL)
 			{
 				yyerror(tree, scope, "variable used before declared");
@@ -437,16 +458,17 @@ term
 factor
 	: NAME
 		{
-			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			list_t *list = search_scope( scope, $1 );
+			if( list == NULL)
 			{
 				yyerror(tree, scope, "variable used before declared");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_FACTOR, RULE_1, NULL, tree_sym( search_scope_depth( scope, $1, scope_depth ) ) );
+			$$ = tree_rule( TREE_FACTOR, RULE_1, NULL, tree_sym( list ) );
 		}
 	| NAME OPEN_P expression_list CLOSE_P
 		{
-			list_t *func = search_scope_depth( scope, $1, scope_depth );
+			list_t *func = search_scope( scope, $1 );
 			if( func == NULL)
 			{
 				yyerror(tree, scope, "variable used before declared");
@@ -461,7 +483,8 @@ factor
 		}
 	| NAME OPEN_B expression CLOSE_B
 		{
-			if( search_scope_depth( scope, $1, scope_depth ) == NULL)
+			list_t *list = search_scope( scope, $1 );
+			if( list == NULL)
 			{
 				yyerror(tree, scope, "variable used before declared");
 				YYABORT;
@@ -471,7 +494,7 @@ factor
 				yyerror(tree, scope, "non integer type used for indexing array");
 				YYABORT;
 			}
-			$$ = tree_rule( TREE_FACTOR, RULE_3, tree_sym( search_scope_depth( scope, $1, scope_depth ) ), $3 );
+			$$ = tree_rule( TREE_FACTOR, RULE_3, tree_sym( list ), $3 );
 		}
 	| INUM
 		{ $$ = tree_rule( TREE_FACTOR, RULE_4, NULL, tree_inum( $1 ) ); }
@@ -495,6 +518,9 @@ int parse(const char *file_path, syntax_tree_t** tree_dest, scope_t **symbol_des
 	}
 
 	*symbol_dest = make_scope(NULL);
+	curr_func = NULL;
+	scope_depth = 0;
+	scope_depths = new_stack(scope_depth);
 
 	int out = yyparse(tree_dest, *symbol_dest);
 	fclose(yyin);

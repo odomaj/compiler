@@ -5,6 +5,7 @@
 
 #include "scope.h"
 #include "tree.h"
+#include "utils.h"
 
 int yylex(void);
 void yyerror(syntax_tree_t **, scope_t *, const char *);

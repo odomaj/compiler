@@ -108,7 +108,7 @@ type_t simple_expression_type(syntax_tree_t *tree);
 type_t term_type(syntax_tree_t *tree);
 type_t factor_type(syntax_tree_t *tree);
 
-uint8_t check_subprogram(syntax_tree_t *tree, scope_t *scope);
+uint8_t check_subprogram(syntax_tree_t *tree);
 
 list_t *interpret_var(syntax_tree_t *tree);
 list_t *get_sym(syntax_tree_t *tree);
@@ -121,5 +121,7 @@ list_t *ids_to_list(syntax_tree_t *ids);
 uint8_t statement_mismatched_types(list_t *list, syntax_tree_t *tree);
 
 uint8_t func_param_mismatch(list_t *func, syntax_tree_t *expressions);
+
+uint8_t subprogram_is_func(syntax_tree_t *sub_head);
 
 #endif
