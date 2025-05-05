@@ -304,7 +304,7 @@ type_t factor_type(syntax_tree_t *tree)
         return type;
     case RULE_5:
         type.type_class = TYPE_STANDARD;
-        type.standard.type = TYPE_INT;
+        type.standard.type = TYPE_REAL;
         return type;
     case RULE_6:
         return expression_type(tree->right);
